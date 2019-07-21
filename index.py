@@ -105,7 +105,7 @@ def site_map():
 
 
 @app.route("/robots.txt")
-@rv_as_mime("text/plain")
+@rv_as_mime("text/plain; charset=utf-8")
 def robots():
     return """User-agent: *
 Disallow: /"""
@@ -121,7 +121,7 @@ def status():
     }
 
 
-def get_response(status_code, msg: str, mime="text/plain"):
+def get_response(status_code, msg: str, mime="text/plain; charset=utf-8"):
     if mime == "application/json":
         res = jsonify(**{"status_code": status_code, "data": msg})
     else:
@@ -140,7 +140,7 @@ def read_md_as_html(id):
 
 
 @app.route("/md/<id>/markdown", methods=["GET"])
-@rv_as_mime("text/plain")
+@rv_as_mime("text/plain; charset=utf-8")
 def read_md(id):
     md = MD.read_md(id)
     if md is None:
