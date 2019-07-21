@@ -23,7 +23,7 @@ Alternatively,
   - Like this
   - And this
 
-  
+
 ## Image
 
 If you want to embed images, this is how you do it:
@@ -80,4 +80,4 @@ But I have to admit, tasks lists are my favorite:
 
 When you include a task list in the first comment of an Issue, you will see a helpful progress bar in your list of issues. It works in Pull Requests, too!
 
-And, of course emoji!
+And, of course emoji! :smile:

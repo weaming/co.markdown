@@ -80,7 +80,7 @@ def rv_as_mime(mime):
 
 @app.route("/")
 def index():
-    return redirect("/sitemap")
+    return redirect("/md/hello/edit")
 
 
 @app.route("/sitemap")
@@ -92,6 +92,13 @@ def site_map():
             url = url_for(rule.endpoint, **(rule.defaults or {"id": "readme"}))
             links[rule.endpoint] = {"url": url, "methods": list(rule.methods)}
     return {"urls": links}
+
+
+@app.route("/robots.txt")
+@rv_as_mime("text/plain")
+def robots():
+    return """User-agent: *
+Disallow: /"""
 
 
 @app.route("/status")
@@ -113,9 +120,6 @@ def get_response(status_code, msg: str, mime="text/plain"):
     return res
 
 
-default_id = "readme"
-
-
 @app.route("/md/<id>/html", methods=["GET"])
 @rv_as_mime("text/html")
 def read_md_as_html(id):
@@ -134,13 +138,18 @@ def read_md(id):
     return md
 
 
+def new_with_example(id):
+    example_md = read_file(example_md_path)
+    MD.save_md(id, example_md)
+    return example_md
+
+
 @app.route("/md/<id>/edit", methods=["GET"])
 @rv_as_mime("text/html")
 def edit_md(id):
     md = MD.read_md(id)
     if md is None:
-        example_md = read_file(example_md_path)
-        MD.save_md(id, example_md)
+        example_md = new_with_example(id)
         return render_template("edit.html", md=example_md, id=id)
     return render_template("edit.html", md=md, id=id)
 
@@ -162,13 +171,19 @@ def update_or_delete_md(id):
     return get_response(405, "method not allowed", "application/json")
 
 
-@app.route("/md/", methods=["POST"])
+@app.route("/md/", methods=["POST", "GET"])
 @rv_as_mime("application/json")
 def create_md():
     id = md5(str(time.time()) + str(random.randrange(0, 1000)))
-    md = request.stream.read().decode("utf8")
-    MD.save_md(id, md)
-    return {"id": id}
+    if request.method == "GET":
+        new_with_example(id)
+        return redirect(f"/md/{id}/edit")
+
+    if request.method == "POST":
+        md = request.stream.read().decode("utf8")
+        MD.save_md(id, md)
+        return {"id": id}
+    return get_response(405, "method not allowed", "application/json")
 
 
 if __name__ == "__main__":
