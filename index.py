@@ -16,6 +16,7 @@ from flask import (
 )
 import maxpress
 import emoji
+import redis
 from lib.common import md5, read_file
 from lib.md_dir import MDir
 
@@ -23,7 +24,12 @@ app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
 
 
-MD = MDir(os.getenv("MARKDOWN_ROOT", "/tmp/markdown"))
+rd = redis.Redis(
+    host=os.getenv("REDIS_HOST", "localhost"),
+    port=int(os.getenv("REDIS_PORT", "6379")),
+    db=int(os.getenv("REDIS_DB", "0")),
+)
+MD = MDir(os.getenv("MARKDOWN_ROOT", "/tmp/markdown"), redis=rd)
 config, styles = maxpress.load_config_and_css(None)
 # config["poster_url"] = "https://bitsflow.org/favicon.png"
 example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
