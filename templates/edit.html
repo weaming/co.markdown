@@ -74,6 +74,10 @@
         box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
         min-height: 86vh;
       }
+
+      #editor small span.mb-hidden {
+        display: none;
+      }
     }
 
     #editor small {
@@ -104,7 +108,9 @@
         <pre class="btn"><a href="/md/" target="_blank">New</a></pre>
         | <pre class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></pre>
         | <pre class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></pre>
-        | Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to <pre id="submit">Submit</pre>.</small>
+        | <span class="mb-hidden">Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to </span>
+          <pre id="submit">Submit</pre>
+      </small>
       <textarea contenteditable="true" id="paper">{{ md }}</textarea>
     </div>
   </body>
