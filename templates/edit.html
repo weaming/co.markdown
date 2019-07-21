@@ -18,8 +18,16 @@
       width: 38vw;
     }
 
-    #editor pre#paper {
+    #editor textarea#paper {
       white-space: pre-wrap;
+      font-size: 16px;
+      overflow: auto;
+      font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
+    Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
+    "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
+    "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
+    "WenQuanYi Zen Hei Sharp", sans-serif;
+      resize: none;
 
       /* A4 paper */
       width: 21cm;
@@ -57,7 +65,7 @@
         <pre class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></pre>
         | <pre class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></pre>
         | Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to submmit.</small>
-      <pre contenteditable="true" id="paper">{{ md }}</pre>
+      <textarea contenteditable="true" id="paper">{{ md }}</textarea>
     </div>
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
@@ -68,7 +76,7 @@
       document.addEventListener("keydown", e => {
         <!-- print('->', e, e.key, e.metaKey, e.ctrlKey); -->
         if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-          let md = document.querySelector("#editor pre#paper").textContent;
+          let md = document.querySelector("#editor textarea#paper").value;
           axios.post(location.pathname.replace("/edit", ""), md)
             .then(function (response) {
               // handle success
@@ -81,7 +89,7 @@
               // handle error
               console.log(error);
             });
-        }
+        };
       });
     })();
   </script>
