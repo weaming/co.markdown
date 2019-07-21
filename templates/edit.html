@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+  <title>{{ id }}</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #editor pre {
+      min-height: 80vh;
+      margin: 0;
+      padding: 50px;
+    }
+  </style>
+  <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
+  <body>
+    <div id="editor">
+      <pre contenteditable="true">{{ md }}</pre>
+    </div>
+  </body>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+  <script>
+    (function() {
+      "use strict";
+      window.print = console.log.bind(console);
+      document.addEventListener("keydown", e => {
+        <!-- print('->', e, e.key, e.metaKey, e.ctrlKey); -->
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
+          let md = document.querySelector("#editor pre").textContent;
+          axios.post(location.pathname.replace("/edit", ""), md)
+            .then(function (response) {
+              // handle success
+              console.log(response);
+              let msg = response.data.message;
+              alert(msg);
+              <!-- location.reload() -->
+            })
+            .catch(function (error) {
+              // handle error
+              console.log(error);
+            });
+        }
+      });
+    })();
+  </script>
+</html>

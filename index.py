@@ -12,6 +12,7 @@ from flask import (
     redirect,
     Response,
     request,
+    render_template,
 )
 import maxpress
 from lib.common import md5
@@ -129,6 +130,15 @@ def read_md(id):
     if md is None:
         return get_response(404, "FILE NOT FOUND")
     return md
+
+
+@app.route("/api/md/<id>/edit", methods=["GET"], defaults={"id": default_id})
+@rv_as_mime("text/html")
+def edit_md(id):
+    md = MD.read_md(id)
+    if md is None:
+        return get_response(404, "FILE NOT FOUND")
+    return render_template("edit.html", md=md, id=id)
 
 
 @app.route("/api/md/<id>", methods=["DELETE", "POST"], defaults={"id": default_id})
