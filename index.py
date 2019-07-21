@@ -2,6 +2,7 @@ import os
 import time
 import random
 import traceback
+from functools import wraps
 from flask import (
     Flask,
     __version__,
@@ -12,15 +13,24 @@ from flask import (
     Response,
     request,
 )
+import maxpress
 from lib.common import md5
 from lib.md_dir import MDir
 
 app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
+
+
 MD = MDir()
+config, styles = maxpress.load_config_and_css(None)
+# config["poster_url"] = "https://bitsflow.org/favicon.png"
 
 
-from functools import wraps
+def m2html(md: str, title):
+    return maxpress.convert_markdown(md, title, config, styles)
+
+
+MD.md2html = m2html
 
 
 def dict_as_json(fn):

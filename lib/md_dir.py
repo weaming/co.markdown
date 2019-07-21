@@ -4,7 +4,7 @@ from .common import prepare_dir
 
 
 class MDir:
-    def __init__(self, root="/tmp"):
+    def __init__(self, root="/tmp/markdown"):
         self.root = root
 
     def get_path(self, id: str):
@@ -18,13 +18,13 @@ class MDir:
             return f.read()
 
     @staticmethod
-    def md2html(md):
+    def md2html(md, id):
         return mistune.markdown(md)
 
     def read_md_as_html(self, id):
         md = self.read_md(id)
         if md is not None:
-            return self.md2html(md)
+            return self.md2html(md, id)
         return None
 
     def save_md(self, id, text):

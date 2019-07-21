@@ -4,3 +4,4 @@ beautifulsoup4
 pytz
 jsonkv
 mistune
+maxpress>=0.2.1
