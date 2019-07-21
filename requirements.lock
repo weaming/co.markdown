@@ -14,7 +14,7 @@ jsonkv==1.1.10
 lesscpy==0.13.0
 lxml==4.3.4
 MarkupSafe==1.1.1
-maxpress==0.2.2
+maxpress==0.2.3
 mistune==0.8.4
 ply==3.11
 premailer==3.5.0

@@ -13,31 +13,63 @@
     "WenQuanYi Zen Hei Sharp", sans-serif;
       font-size: 16px;
     }
-    div#editor {
-      margin: 0 auto;
-      width: 38vw;
+
+    @media screen and (min-width: 1024px) {
+      div#editor {
+        margin: 0 auto;
+        width: 38vw;
+      }
+
+      #editor textarea#paper {
+        white-space: pre-wrap;
+        font-size: 16px;
+        overflow: auto;
+        font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
+        Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
+        "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
+        "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
+        "WenQuanYi Zen Hei Sharp", sans-serif;
+        resize: none;
+
+        /* A4 paper */
+        min-width: 21cm;
+        padding: 2cm;
+        margin: 0.5cm auto;
+        border: 1px #D3D3D3 solid;
+        border-radius: 5px;
+        background: #F5F5D5;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        min-height: 90vh;
+      }
     }
 
-    #editor textarea#paper {
-      white-space: pre-wrap;
-      font-size: 16px;
-      overflow: auto;
-      font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
-    Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
-    "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
-    "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
-    "WenQuanYi Zen Hei Sharp", sans-serif;
-      resize: none;
+    @media screen and (max-width: 1024px) {
+      div#editor {
+        margin: 0 auto;
+        width: 98vw;
+      }
 
-      /* A4 paper */
-      width: 21cm;
-      min-height: 29.7cm;
-      padding: 2cm;
-      margin: 0.5cm auto;
-      border: 1px #D3D3D3 solid;
-      border-radius: 5px;
-      background: #F5F5D5;
-      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      #editor textarea#paper {
+        white-space: pre-wrap;
+        font-size: 16px;
+        overflow: auto;
+        font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
+        Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
+        "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
+        "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
+        "WenQuanYi Zen Hei Sharp", sans-serif;
+        resize: none;
+
+        /* A4 paper */
+        width: 83%;
+        padding: 2cm;
+        margin: 0.5cm auto;
+        border: 1px #D3D3D3 solid;
+        border-radius: 5px;
+        background: #F5F5D5;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        min-height: 86vh;
+      }
     }
 
     #editor small {
@@ -56,7 +88,10 @@
     #editor small pre.btn a {
       text-decoration: none;
     }
-    #editor small pre {
+
+    #submit {
+      cursor: pointer;
+    }
   </style>
   <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
   <body>
@@ -65,7 +100,7 @@
         <pre class="btn"><a href="/md/" target="_blank">New</a></pre>
         | <pre class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></pre>
         | <pre class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></pre>
-        | Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to submmit.</small>
+        | Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to <pre id="submit">Submit</pre>.</small>
       <textarea contenteditable="true" id="paper">{{ md }}</textarea>
     </div>
   </body>
@@ -74,24 +109,29 @@
     (function() {
       "use strict";
       window.print = console.log.bind(console);
+
+      let update = function() {
+        let md = document.querySelector("#editor textarea#paper").value;
+        axios.post(location.pathname.replace("/edit", ""), md)
+          .then(function (response) {
+            // handle success
+            console.log(response);
+            let msg = response.data.message;
+            alert(msg);
+            <!-- location.reload() -->
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      }
+
       document.addEventListener("keydown", e => {
         <!-- print('->', e, e.key, e.metaKey, e.ctrlKey); -->
-        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-          let md = document.querySelector("#editor textarea#paper").value;
-          axios.post(location.pathname.replace("/edit", ""), md)
-            .then(function (response) {
-              // handle success
-              console.log(response);
-              let msg = response.data.message;
-              alert(msg);
-              <!-- location.reload() -->
-            })
-            .catch(function (error) {
-              // handle error
-              console.log(error);
-            });
-        };
+        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { update() };
       });
+
+      document.getElementById("submit").onclick = update;
     })();
   </script>
 </html>

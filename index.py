@@ -27,7 +27,7 @@ DEBUG = bool(os.getenv("DEBUG"))
 host = os.getenv("REDIS_HOST", "localhost")
 port = int(os.getenv("REDIS_PORT", "6379"))
 db = int(os.getenv("REDIS_DB", "0"))
-print(host, port, db)
+print("redis config:", host, port, db)
 rd = redis.Redis(
     host=host,
     port=port,
