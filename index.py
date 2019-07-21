@@ -15,7 +15,7 @@ from flask import (
     render_template,
 )
 import maxpress
-from lib.common import md5
+from lib.common import md5, read_file
 from lib.md_dir import MDir
 
 app = Flask(__name__)
@@ -25,6 +25,7 @@ DEBUG = bool(os.getenv("DEBUG"))
 MD = MDir()
 config, styles = maxpress.load_config_and_css(None)
 # config["poster_url"] = "https://bitsflow.org/favicon.png"
+example_md = read_file(os.path.join(os.path.dirname(__file__), "templates/example.md"))
 
 
 def m2html(md: str, title):
@@ -87,7 +88,7 @@ def site_map():
     links = {}
     for rule in app.url_map.iter_rules():
         if rule.endpoint != "static":
-            url = url_for(rule.endpoint, **(rule.defaults or {}))
+            url = url_for(rule.endpoint, **(rule.defaults or {"id": "readme"}))
             links[rule.endpoint] = {"url": url, "methods": list(rule.methods)}
     return {"urls": links}
 
@@ -114,7 +115,7 @@ def get_response(status_code, msg: str, mime="text/plain"):
 default_id = "readme"
 
 
-@app.route("/api/md/<id>/html", methods=["GET"], defaults={"id": default_id})
+@app.route("/md/<id>/html", methods=["GET"], )
 @rv_as_mime("text/html")
 def read_md_as_html(id):
     html = MD.read_md_as_html(id)
@@ -123,7 +124,7 @@ def read_md_as_html(id):
     return html
 
 
-@app.route("/api/md/<id>/md", methods=["GET"], defaults={"id": default_id})
+@app.route("/md/<id>/markdown", methods=["GET"], )
 @rv_as_mime("text/plain")
 def read_md(id):
     md = MD.read_md(id)
@@ -132,16 +133,17 @@ def read_md(id):
     return md
 
 
-@app.route("/api/md/<id>/edit", methods=["GET"], defaults={"id": default_id})
+@app.route("/md/<id>/edit", methods=["GET"], )
 @rv_as_mime("text/html")
 def edit_md(id):
     md = MD.read_md(id)
     if md is None:
-        return get_response(404, "FILE NOT FOUND")
+        MD.save_md(id, example_md)
+        return render_template("edit.html", md=example_md, id=id)
     return render_template("edit.html", md=md, id=id)
 
 
-@app.route("/api/md/<id>", methods=["DELETE", "POST"], defaults={"id": default_id})
+@app.route("/md/<id>", methods=["DELETE", "POST"], )
 @rv_as_mime("application/json")
 def update_or_delete_md(id):
     if request.method == "DELETE":
@@ -156,7 +158,7 @@ def update_or_delete_md(id):
     return get_response(405, "method not allowed", "application/json")
 
 
-@app.route("/api/md/", methods=["POST"])
+@app.route("/md/", methods=["POST"])
 @rv_as_mime("application/json")
 def create_md():
     id = md5(str(time.time()) + str(random.randrange(0, 1000)))

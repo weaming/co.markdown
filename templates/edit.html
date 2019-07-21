@@ -5,17 +5,59 @@
     body {
       margin: 0;
       padding: 0;
+      background: #EDEDED;
+      font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
+    Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
+    "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
+    "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
+    "WenQuanYi Zen Hei Sharp", sans-serif;
+      font-size: 16px;
     }
-    #editor pre {
-      min-height: 80vh;
-      margin: 0;
-      padding: 50px;
+    div#editor {
+      margin: 0 auto;
+      width: 38vw;
     }
+
+    #editor pre#paper {
+      white-space: pre-wrap;
+
+      /* A4 paper */
+      width: 21cm;
+      min-height: 29.7cm;
+      padding: 2cm;
+      margin: 0.5cm auto;
+      border: 1px #D3D3D3 solid;
+      border-radius: 5px;
+      background: #F5F5D5;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+    }
+
+    #editor small {
+      display: inline-block;
+      padding: 10px ;
+    }
+
+    #editor small pre {
+      display: inline-block;
+      border: 1px solid black;
+      padding: 3px 5px;
+      margin: 0 2px;
+      border-radius: 2px;
+      text-decoration: none;
+    }
+    #editor small pre.btn a {
+      text-decoration: none;
+    }
+    #editor small pre {
   </style>
   <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
   <body>
     <div id="editor">
-      <pre contenteditable="true">{{ md }}</pre>
+      <small>
+        <pre class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></pre>
+        | <pre class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></pre>
+        | Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to submmit.</small>
+      <pre contenteditable="true" id="paper">{{ md }}</pre>
     </div>
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
@@ -26,7 +68,7 @@
       document.addEventListener("keydown", e => {
         <!-- print('->', e, e.key, e.metaKey, e.ctrlKey); -->
         if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) {
-          let md = document.querySelector("#editor pre").textContent;
+          let md = document.querySelector("#editor pre#paper").textContent;
           axios.post(location.pathname.replace("/edit", ""), md)
             .then(function (response) {
               // handle success
