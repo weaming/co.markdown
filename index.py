@@ -1,6 +1,5 @@
 import os
 import time
-import json
 import random
 import traceback
 from functools import wraps
@@ -173,8 +172,6 @@ def update_or_delete_md(id):
         return {"message": "deleted"}
 
     if request.method == "POST":
-        if id == "readme":
-            return {"message": "readme is not allowed to be updated"}
         md = request.stream.read().decode("utf8")
         MD.save_md(id, md)
         return {"message": "updated"}
