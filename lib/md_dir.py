@@ -23,12 +23,13 @@ class MDir:
             v = self.redis.get(path)
             if v is not None:
                 self.redis.expire(path, self.expire)
-            return v.decode('utf8')
+                return v.decode('utf8')
         else:
             if not os.path.isfile(path):
                 return None
             with open(path) as f:
                 return f.read()
+        return None
 
     @staticmethod
     def md2html(md, id):
