@@ -1,5 +1,6 @@
 import os
 import time
+import json
 import random
 import traceback
 from functools import wraps
@@ -24,10 +25,14 @@ app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
 
 
+host = os.getenv("REDIS_HOST", "localhost")
+port = int(os.getenv("REDIS_PORT", "6379"))
+db = int(os.getenv("REDIS_DB", "0"))
+print(host, port, db)
 rd = redis.Redis(
-    host=os.getenv("REDIS_HOST", "localhost"),
-    port=int(os.getenv("REDIS_PORT", "6379")),
-    db=int(os.getenv("REDIS_DB", "0")),
+    host=host,
+    port=port,
+    db=db,
 )
 MD = MDir(os.getenv("MARKDOWN_ROOT", "/tmp/markdown"), redis=rd)
 config, styles = maxpress.load_config_and_css(None)
