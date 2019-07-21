@@ -15,6 +15,7 @@ from flask import (
     render_template,
 )
 import maxpress
+import emoji
 from lib.common import md5, read_file
 from lib.md_dir import MDir
 
@@ -22,10 +23,10 @@ app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
 
 
-MD = MDir()
+MD = MDir(os.getenv("MARKDOWN_ROOT", "/tmp/markdown"))
 config, styles = maxpress.load_config_and_css(None)
 # config["poster_url"] = "https://bitsflow.org/favicon.png"
-example_md = read_file(os.path.join(os.path.dirname(__file__), "templates/example.md"))
+example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
 
 
 def m2html(md: str, title):
@@ -115,16 +116,16 @@ def get_response(status_code, msg: str, mime="text/plain"):
 default_id = "readme"
 
 
-@app.route("/md/<id>/html", methods=["GET"], )
+@app.route("/md/<id>/html", methods=["GET"])
 @rv_as_mime("text/html")
 def read_md_as_html(id):
     html = MD.read_md_as_html(id)
     if html is None:
         return get_response(404, "FILE NOT FOUND")
-    return html
+    return emoji.emojize(html, use_aliases=True)
 
 
-@app.route("/md/<id>/markdown", methods=["GET"], )
+@app.route("/md/<id>/markdown", methods=["GET"])
 @rv_as_mime("text/plain")
 def read_md(id):
     md = MD.read_md(id)
@@ -133,17 +134,18 @@ def read_md(id):
     return md
 
 
-@app.route("/md/<id>/edit", methods=["GET"], )
+@app.route("/md/<id>/edit", methods=["GET"])
 @rv_as_mime("text/html")
 def edit_md(id):
     md = MD.read_md(id)
     if md is None:
+        example_md = read_file(example_md_path)
         MD.save_md(id, example_md)
         return render_template("edit.html", md=example_md, id=id)
     return render_template("edit.html", md=md, id=id)
 
 
-@app.route("/md/<id>", methods=["DELETE", "POST"], )
+@app.route("/md/<id>", methods=["DELETE", "POST"])
 @rv_as_mime("application/json")
 def update_or_delete_md(id):
     if request.method == "DELETE":
@@ -151,6 +153,8 @@ def update_or_delete_md(id):
         return {"message": "deleted"}
 
     if request.method == "POST":
+        if id == "readme":
+            return {"message": "readme is not allowed to be updated"}
         md = request.stream.read().decode("utf8")
         MD.save_md(id, md)
         return {"message": "updated"}
