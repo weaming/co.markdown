@@ -3,3 +3,5 @@ __pycache__/
 .idea/
 .venv
 .env
+uwsgi.master.fifo
+uwsgi.stats.sock
