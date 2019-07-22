@@ -160,8 +160,8 @@ def edit_md(id):
     md = MD.read_md(id)
     if md is None:
         example_md = new_with_example(id)
-        return render_template("edit.html", md=example_md, id=id)
-    return render_template("edit.html", md=md, id=id)
+        return render_template("edit2.html", md=example_md, id=id)
+    return render_template("edit2.html", md=md, id=id)
 
 
 @app.route("/md/<id>", methods=["DELETE", "POST"])
