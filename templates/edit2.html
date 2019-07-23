@@ -14,32 +14,34 @@
       font-size: 16px;
     }
 
+    #editor textarea#paper {
+      white-space: pre-wrap;
+      font-size: 16px;
+      overflow: auto;
+      font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
+      Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
+      "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
+      "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
+      "WenQuanYi Zen Hei Sharp", sans-serif;
+      resize: none;
+
+      /* A4 paper */
+      box-sizing: border-box;
+      width: 100%;
+      padding: 2cm;
+      /* margin: 0.5cm; */
+      margin: 10px;
+      border: 1px #D3D3D3 solid;
+      border-radius: 5px;
+      background: #F5F5D5;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      min-height: 90vh;
+    }
+
     @media screen and (min-width: 1024px) {
       div#editor {
         margin: 0 auto;
         width: 38vw;
-      }
-
-      #editor textarea#paper {
-        white-space: pre-wrap;
-        font-size: 16px;
-        overflow: auto;
-        font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
-        Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
-        "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
-        "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
-        "WenQuanYi Zen Hei Sharp", sans-serif;
-        resize: none;
-
-        /* A4 paper */
-        min-width: 21cm;
-        padding: 2cm;
-        margin: 0.5cm;
-        border: 1px #D3D3D3 solid;
-        border-radius: 5px;
-        background: #F5F5D5;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        min-height: 90vh;
       }
     }
 
@@ -55,24 +57,6 @@
 
       #editor textarea#paper {
         font-size: 40px;
-        white-space: pre-wrap;
-        overflow: auto;
-        font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
-        Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
-        "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
-        "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
-        "WenQuanYi Zen Hei Sharp", sans-serif;
-        resize: none;
-
-        /* A4 paper */
-        width: 83%;
-        padding: 2cm;
-        margin: 0.5cm auto;
-        border: 1px #D3D3D3 solid;
-        border-radius: 5px;
-        background: #F5F5D5;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        min-height: 86vh;
       }
 
       #editor small span.mb-hidden {
