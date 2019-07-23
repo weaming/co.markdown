@@ -14,7 +14,6 @@ from flask import (
     request,
     render_template,
 )
-import emoji
 from lib.common import md5, read_file
 from md.patch import mdir, patch_renderer
 
@@ -114,7 +113,7 @@ def read_md_as_html(id):
     html = mdir.read_md_as_html(id)
     if html is None:
         return get_response(404, "FILE NOT FOUND")
-    return emoji.emojize(html, use_aliases=True)
+    return html
 
 
 @app.route("/md/<id>/markdown", methods=["GET"])

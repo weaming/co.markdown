@@ -1,7 +1,9 @@
 import os
 
+import emoji
 import maxpress
 import redis
+from maxpress.renderer import MRender, MDown
 
 from lib.md_dir import MDir
 
@@ -27,5 +29,11 @@ def m2html(md: str, title):
     return maxpress.convert_markdown(md, title, config, styles)
 
 
+class EmojiMRender(MRender):
+    def emojize(self, text):
+        return emoji.emojize(text, use_aliases=True)
+
+
 def patch_renderer():
     mdir.md2html = m2html
+    maxpress.export["markdown"] = MDown(renderer=EmojiMRender())
