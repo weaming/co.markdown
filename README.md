@@ -24,12 +24,12 @@ Collaboration with Markdown. Filesystem or redis as storage.
 
 ## What you can use it for
 
-No write lock, no instant synchronization.
+~~No write lock,~~ no instant synchronization.
 
-Apply to the scene when you want to shared something to public temporarily and would like to be updated by anyone.
+Apply to the scene when you want to shared something to public temporarily,
+and would like to be updated by someone has the password if you have set.
 
-
-# TODO
+## TODO
 
 * [x] 修复渲染子列表异常
     * [x] 4空格缩进渲染异常，2空格正常
@@ -45,3 +45,7 @@ Apply to the scene when you want to shared something to public temporarily and w
 * [x] 添加网站图标
 * [x] better emoji implement
 * [x] fix tooltip size on mobile
+
+## Screenshot
+
+![](assets/screenshot.jpg)
