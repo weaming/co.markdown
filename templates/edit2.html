@@ -64,8 +64,10 @@
       }
 
       /* fix for editor */
-      #editor .editor-toolbar a {
+      #editor .editor-toolbar a, /* simple-markdown-editor */
+      #editor .editor-toolbar button /* easymde */ {
         margin: 15px;
+        font-size: 40px;
       }
     }
 
@@ -114,11 +116,11 @@
       window.print = console.log.bind(console);
       let paper = document.querySelector("#editor textarea#paper")
 
-      <!-- let MDE = new SimpleMDE({ element: paper, autofocus: true }); -->
+      // let MDE = new SimpleMDE({ element: paper, autofocus: true });
       let MDE = new EasyMDE({ element: paper, spellChecker: false });
 
       let update = function() {
-        <!-- let MDE = paper.value; -->
+        // let md = paper.value;
         let md = MDE.value();
         axios.post(location.pathname.replace("/edit", ""), md)
           .then(function (response) {
@@ -126,7 +128,7 @@
             console.log(response);
             let msg = response.data.message;
             alert(msg);
-            <!-- location.reload() -->
+            // location.reload()
           })
           .catch(function (error) {
             // handle error
@@ -135,7 +137,7 @@
       }
 
       document.addEventListener("keydown", e => {
-        <!-- print('->', e, e.key, e.metaKey, e.ctrlKey); -->
+        // print('->', e, e.key, e.metaKey, e.ctrlKey);
         if ((e.key === "Enter" || e.key === "s") && (e.ctrlKey || e.metaKey)) {
           e.preventDefault(); update();
         };
