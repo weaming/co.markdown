@@ -14,36 +14,14 @@ from flask import (
     request,
     render_template,
 )
-import maxpress
 import emoji
-import redis
 from lib.common import md5, read_file
-from lib.md_dir import MDir
+from md.patch import mdir, patch_renderer
 
+patch_renderer()
 app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
-
-
-host = os.getenv("REDIS_HOST", "localhost")
-port = int(os.getenv("REDIS_PORT", "6379"))
-db = int(os.getenv("REDIS_DB", "0"))
-print("redis config:", host, port, db)
-rd = redis.Redis(
-    host=host,
-    port=port,
-    db=db,
-)
-MD = MDir(os.getenv("MARKDOWN_ROOT", "/tmp/markdown"), redis=rd)
-config, styles = maxpress.load_config_and_css(None)
-# config["poster_url"] = "https://bitsflow.org/favicon.png"
 example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
-
-
-def m2html(md: str, title):
-    return maxpress.convert_markdown(md, title, config, styles)
-
-
-MD.md2html = m2html
 
 
 def dict_as_json(fn):
@@ -133,7 +111,7 @@ def get_response(status_code, msg: str, mime="text/plain; charset=utf-8"):
 @app.route("/md/<id>/html", methods=["GET"])
 @rv_as_mime("text/html")
 def read_md_as_html(id):
-    html = MD.read_md_as_html(id)
+    html = mdir.read_md_as_html(id)
     if html is None:
         return get_response(404, "FILE NOT FOUND")
     return emoji.emojize(html, use_aliases=True)
@@ -142,7 +120,7 @@ def read_md_as_html(id):
 @app.route("/md/<id>/markdown", methods=["GET"])
 @rv_as_mime("text/plain; charset=utf-8")
 def read_md(id):
-    md = MD.read_md(id)
+    md = mdir.read_md(id)
     if md is None:
         return get_response(404, "FILE NOT FOUND")
     return md
@@ -150,14 +128,14 @@ def read_md(id):
 
 def new_with_example(id):
     example_md = read_file(example_md_path)
-    MD.save_md(id, example_md)
+    mdir.save_md(id, example_md)
     return example_md
 
 
 @app.route("/md/<id>/edit", methods=["GET"])
 @rv_as_mime("text/html")
 def edit_md(id):
-    md = MD.read_md(id)
+    md = mdir.read_md(id)
     if md is None:
         example_md = new_with_example(id)
         return render_template("edit2.html", md=example_md, id=id)
@@ -168,12 +146,12 @@ def edit_md(id):
 @rv_as_mime("application/json")
 def update_or_delete_md(id):
     if request.method == "DELETE":
-        MD.rm_md(id)
+        mdir.rm_md(id)
         return {"message": "deleted"}
 
     if request.method == "POST":
         md = request.stream.read().decode("utf8")
-        MD.save_md(id, md)
+        mdir.save_md(id, md)
         return {"message": "updated"}
 
     return get_response(405, "method not allowed", "application/json")
@@ -189,7 +167,7 @@ def create_md():
 
     if request.method == "POST":
         md = request.stream.read().decode("utf8")
-        MD.save_md(id, md)
+        mdir.save_md(id, md)
         return {"id": id}
     return get_response(405, "method not allowed", "application/json")
 

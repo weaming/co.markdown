@@ -131,7 +131,7 @@
       let paper = document.querySelector("#editor textarea#paper")
 
       <!-- let MDE = new SimpleMDE({ element: paper, autofocus: true }); -->
-      let MDE = new EasyMDE({ element: paper });
+      let MDE = new EasyMDE({ element: paper, spellChecker: false });
 
       let update = function() {
         <!-- let MDE = paper.value; -->

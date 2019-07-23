@@ -7,3 +7,4 @@ mistune
 maxpress>=0.2.1
 emoji
 redis
+-e git://github.com/lepture/mistune-contrib.git#egg=mistune-contrib
