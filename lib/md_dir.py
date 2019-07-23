@@ -1,7 +1,8 @@
 import os
 import mistune
 import redis
-from .common import prepare_dir
+
+from .common import prepare_dir, md5
 
 year = 60 * 60 * 24 * 365
 
@@ -23,7 +24,7 @@ class MDir:
             v = self.redis.get(path)
             if v is not None:
                 self.redis.expire(path, self.expire)
-                return v.decode('utf8')
+                return v.decode("utf8")
         else:
             if not os.path.isfile(path):
                 return None
@@ -44,7 +45,7 @@ class MDir:
     def save_md(self, id, text):
         path = self.get_path(id)
         if self.redis:
-            self.redis.set(path, text.encode('utf8'))
+            self.redis.set(path, text.encode("utf8"))
             self.redis.expire(id, self.expire)
         else:
             prepare_dir(path)
@@ -63,3 +64,32 @@ class MDir:
                 except Exception as e:
                     print(e)
             return False
+
+    def get_password_path(self, id):
+        path = self.get_path(id)
+        if self.redis:
+            return "pw:" + path
+        return path + ".md"
+
+    def get_user_password(self, id):
+        u, p = None, None
+        pw_key = self.get_password_path(id)
+        if self.redis:
+            v = self.redis.get(pw_key)
+            if v is not None:
+                self.redis.expire(pw_key, self.expire)
+                p = v.decode("utf8")
+        return u, p
+
+    def set_user_password(self, id, user: str, pw: str):
+        pw_key = self.get_password_path(id)
+        pw_secret = self.hash_password(pw)
+        if self.redis:
+            self.redis.set(pw_key, pw_secret.encode("utf8"))
+            self.redis.expire(pw_key, self.expire)
+            return True
+        return False
+
+    @staticmethod
+    def hash_password(password):
+        return md5(password)

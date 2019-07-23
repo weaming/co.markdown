@@ -77,31 +77,46 @@
       padding: 10px ;
     }
 
-    #editor small pre {
+    #editor small code,
+    #editor small .btn {
       display: inline-block;
       border: 1px solid black;
-      padding: 3px 5px;
+      padding: 3px 6px;
       margin: 0 2px;
       border-radius: 2px;
       text-decoration: none;
     }
-    #editor small pre.btn a {
+    #editor small .btn a {
       text-decoration: none;
     }
 
-    #submit {
+    .pointer {
       cursor: pointer;
+    }
+    .bg-green {
+      background: #009900;
+    }
+    .bg-red {
+      background: red;
+    }
+    .white {
+      color: white;
     }
   </style>
   <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
   <body>
     <div id="editor">
       <small>
-        <pre class="btn"><a href="/md/" target="_blank">New</a></pre>
-        | <pre class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></pre>
-        | <pre class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></pre>
-        | <span class="mb-hidden">Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre> / <pre>S</pre> to </span>
-          <pre id="submit">Save</pre>
+        <span class="btn"><a href="/md/" target="_blank">New</a></span>
+        | <span class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></span>
+        | <span class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></span>
+        {% if password %}
+        | <span id="setPW" class="btn pointer bg-green white">Protected</span>
+        {% else %}
+        | <span id="setPW" class="btn pointer bg-red white">Set Password</span>
+        {% endif %}
+        | <span class="mb-hidden">Press <code>Ctrl</code>/<code>⌘</code> + <code>Enter</code> / <code>S</code> to </span>
+          <span id="submit" class="pointer btn">Save</span>
       </small>
       <textarea contenteditable="true" id="paper">{{ md }}</textarea>
     </div>
@@ -145,6 +160,26 @@
       });
 
       document.getElementById("submit").onclick = update;
+
+      // password
+      let setPW = function() {
+        let pw = prompt("Please enter your password for this markdown", "").trim();
+        if (!pw) {
+          return
+        }
+        axios.post(location.pathname.replace("/edit", "/set_password"), {password: pw})
+          .then(function (response) {
+            // handle success
+            console.log(response);
+            let msg = response.data.message;
+            alert(msg);
+          })
+          .catch(function (error) {
+            // handle error
+            console.log(error);
+          });
+      }
+      document.getElementById("setPW").onclick = setPW;
     })();
   </script>
 </html>

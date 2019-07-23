@@ -14,6 +14,8 @@ from flask import (
     request,
     render_template,
 )
+
+from lib.auth import BasicAuth4MarkdownID
 from lib.common import md5, read_file
 from md.patch import mdir, patch_renderer
 
@@ -23,6 +25,10 @@ DEBUG = bool(os.getenv("DEBUG"))
 example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
 icon = "https://i.loli.net/2019/07/23/5d372848883f339418.png"
 icon_tag = f'<link rel="shortcut icon" href="{icon}"/>'
+
+basic_auth = BasicAuth4MarkdownID(app)
+basic_auth.set_mdir(mdir)
+app.config['BASIC_AUTH_REALM'] = "protected markdown"
 
 
 def dict_as_json(fn):
@@ -134,16 +140,37 @@ def new_with_example(id):
 
 
 @app.route("/md/<id>/edit", methods=["GET"])
+@basic_auth.required
 @rv_as_mime("text/html")
 def edit_md(id):
     md = mdir.read_md(id)
     if md is None:
         example_md = new_with_example(id)
         return render_template("edit2.html", md=example_md, id=id)
-    return render_template("edit2.html", md=md, id=id)
+    u, p = mdir.get_user_password(id)
+    return render_template("edit2.html", md=md, id=id, user=u, password=p)
+
+
+@app.route("/md/<id>/set_password", methods=["POST"])
+@basic_auth.required
+@rv_as_mime("application/json")
+def set_password_for_md(id):
+    md = mdir.read_md(id)
+    if md is not None:
+        data = request.get_json()
+        pw = data.get("password")
+        if pw:
+            if mdir.set_user_password(id, None, pw):
+                return {"message": "succeed setting password"}
+            else:
+                return {"message": "failed setting password"}
+        else:
+            return {"message": "missing password"}
+    return {"message": "NOT FOUND"}
 
 
 @app.route("/md/<id>", methods=["DELETE", "POST"])
+@basic_auth.required
 @rv_as_mime("application/json")
 def update_or_delete_md(id):
     if request.method == "DELETE":
