@@ -27,3 +27,19 @@ Collaboration with Markdown. Filesystem or redis as storage.
 No write lock, no instant synchronization.
 
 Apply to the scene when you want to shared something to public temporarily and would like to be updated by anyone.
+
+
+# TODO
+
+* [x] 修复渲染子列表异常
+    * [x] 4空格缩进渲染异常，2空格正常
+    * [x] 列表栈 pop 回到上一级渲染异常
+* [x] 微信字符编码未指定，渲染异常
+* [x] 手机字体调整，隐藏快捷键帮助信息
+* [x] 支持渲染 TODO
+* [x] h3 竟然居中了？！配置决定。
+* [x] 更完美的 MD 编辑器
+* [x] 改成 Ctrl+S 保存
+* [ ] 添加文章密码
+* [ ] 添加文章最近20次修改历史
+* [ ] 添加网站图标
