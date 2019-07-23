@@ -21,6 +21,8 @@ patch_renderer()
 app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
 example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
+icon = "https://i.loli.net/2019/07/23/5d372848883f339418.png"
+icon_tag = f'<link rel="shortcut icon" href="{icon}"/>'
 
 
 def dict_as_json(fn):
@@ -113,7 +115,7 @@ def read_md_as_html(id):
     html = mdir.read_md_as_html(id)
     if html is None:
         return get_response(404, "FILE NOT FOUND")
-    return html
+    return icon_tag + html
 
 
 @app.route("/md/<id>/markdown", methods=["GET"])
