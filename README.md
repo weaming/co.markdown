@@ -40,6 +40,8 @@ Apply to the scene when you want to shared something to public temporarily and w
 * [x] h3 竟然居中了？！配置决定。
 * [x] 更完美的 MD 编辑器
 * [x] 改成 Ctrl+S 保存
-* [ ] 添加文章密码
+* [x] 添加文章密码
 * [ ] 添加文章最近20次修改历史
-* [ ] 添加网站图标
+* [x] 添加网站图标
+* [x] better emoji implement
+* [x] fix tooltip size on mobile
