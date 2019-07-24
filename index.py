@@ -64,6 +64,8 @@ def rv_as_mime(mime):
             if isinstance(rv, Response):
                 response = rv
             else:
+                if mime == "text/html":
+                    rv = icon_tag + rv
                 response = make_response(rv)
             response.headers["Content-Type"] = mime
             return response
@@ -121,7 +123,7 @@ def read_md_as_html(id):
     html = mdir.read_md_as_html(id)
     if html is None:
         return get_response(404, "FILE NOT FOUND")
-    return icon_tag + html
+    return html
 
 
 @app.route("/md/<id>/markdown", methods=["GET"])
@@ -200,15 +202,21 @@ def create_md():
     return get_response(405, "method not allowed", "application/json")
 
 
-@app.route("/render", methods=["POST"])
-@rv_as_mime("plain/html")
+@app.route("/render", methods=["POST", "GET"])
+@rv_as_mime("text/html")
 def render():
-    md = request.stream.read().decode("utf8")
-    if not md.strip():
-        md = "You markdown is blank! :smile:"
-        title = ":smile:"
-    else:
-        title = md.split("\n")[0].lstrip("# ").strip() if md.strip() else ""
+    if request.method == "GET":
+        md = "POST your markdown text to this endpoint to render instantly! :smile:"
+        title = ":joy:"
+
+    elif request.method == "POST":
+        md = request.stream.read().decode("utf8")
+        if not md.strip():
+            md = "You markdown is blank! :smile:"
+            title = ":smile:"
+        else:
+            title = md.split("\n")[0].lstrip("# ").strip() if md.strip() else ""
+
     return mdir.md2html(md, emojize(title))
 
 
