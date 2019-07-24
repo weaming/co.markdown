@@ -23,8 +23,16 @@ patch_renderer()
 app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
 example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
+
+# https://www.w3.org/2005/10/howto-favicon
 icon = "https://i.loli.net/2019/07/23/5d372848883f339418.png"
-icon_tag = f'<link rel="shortcut icon" href="{icon}"/>'
+# icon = "https://i.loli.net/2019/07/23/5d3729d9d3aef58565.png"
+icon_tag = f'<link rel="shortcut icon" href="{icon}"'
+# https://stackoverflow.com/questions/8091996/http-header-stylesheets
+# http://test.greenbytes.de/tech/tc/httplink/
+# https://www.iana.org/assignments/message-headers/message-headers.xhtml
+# https://tools.ietf.org/html/rfc8288
+icon_header = f'<{icon}>; rel="shortcut icon"'
 
 basic_auth = BasicAuth4MarkdownID(app)
 basic_auth.set_mdir(mdir)
@@ -63,11 +71,15 @@ def rv_as_mime(mime):
             rv = fn(*args, **kwargs)
             if isinstance(rv, Response):
                 response = rv
+            elif isinstance(rv, dict):
+                response = jsonify(**rv)
+                mime = "application/json"
             else:
                 if mime == "text/html":
                     rv = icon_tag + rv
                 response = make_response(rv)
             response.headers["Content-Type"] = mime
+            response.headers["Link"] = icon_header
             return response
 
         return _fn
@@ -81,7 +93,7 @@ def index():
 
 
 @app.route("/sitemap")
-@dict_as_json
+@rv_as_mime("application/json")
 def site_map():
     links = {}
     for rule in app.url_map.iter_rules():
@@ -99,7 +111,7 @@ Disallow: /"""
 
 
 @app.route("/status")
-@dict_as_json
+@rv_as_mime("application/json")
 def status():
     return {
         "flask": {"version": __version__},
