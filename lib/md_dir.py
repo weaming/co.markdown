@@ -55,6 +55,7 @@ class MDir:
     def rm_md(self, id):
         path = self.get_path(id)
         if self.redis:
+            self.redis.delete(self.get_password_path(id))
             return self.redis.delete(path)
         else:
             if os.path.isfile(path):

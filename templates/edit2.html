@@ -115,6 +115,7 @@
         {% else %}
         | <span id="setPW" class="btn pointer bg-red white">Set Password</span>
         {% endif %}
+        | <span id="delete" class="btn pointer">Delete</span>
         | <span class="mb-hidden">Press <code>Ctrl</code>/<code>⌘</code> + <code>Enter</code> / <code>S</code> to </span>
           <span id="submit" class="pointer btn">Save</span>
       </small>
@@ -130,6 +131,11 @@
     (function() {
       "use strict";
       window.print = console.log.bind(console);
+      let titleCase = function (str) {
+        return str.replace(/[a-z]/i, function (letter) {
+          return letter.toUpperCase();
+        }).trim();
+      }
       let paper = document.querySelector("#editor textarea#paper")
 
       // let MDE = new SimpleMDE({ element: paper, autofocus: true });
@@ -140,14 +146,11 @@
         let md = MDE.value();
         axios.post(location.pathname.replace("/edit", ""), md)
           .then(function (response) {
-            // handle success
             console.log(response);
-            let msg = response.data.message;
+            let msg = titleCase(response.data.message);
             alert(msg);
-            // location.reload()
           })
           .catch(function (error) {
-            // handle error
             console.log(error);
           });
       }
@@ -169,17 +172,30 @@
         }
         axios.post(location.pathname.replace("/edit", "/set_password"), {password: pw})
           .then(function (response) {
-            // handle success
             console.log(response);
-            let msg = response.data.message;
+            let msg = titleCase(response.data.message);
             alert(msg);
           })
           .catch(function (error) {
-            // handle error
             console.log(error);
           });
       }
       document.getElementById("setPW").onclick = setPW;
+
+      // delete
+      let deleteme = function() {
+        print('delete')
+        axios.delete(location.pathname.replace("/edit", ""), "")
+          .then(function (response) {
+            console.log(response);
+            let msg = response.data.message;
+            alert(titleCase(msg)+"! Of course, you can save again before refresh this page.");
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
+      }
+      document.getElementById("delete").onclick = deleteme;
     })();
   </script>
 </html>
