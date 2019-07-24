@@ -29,9 +29,13 @@ def m2html(md: str, title):
     return maxpress.convert_markdown(md, title, config, styles)
 
 
+def emojize(text):
+    return emoji.emojize(text, use_aliases=True)
+
+
 class EmojiMRender(MRender):
     def emojize(self, text):
-        return emoji.emojize(text, use_aliases=True)
+        return emojize(text)
 
 
 def patch_renderer():

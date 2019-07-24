@@ -17,7 +17,7 @@ from flask import (
 
 from lib.auth import BasicAuth4MarkdownID
 from lib.common import md5, read_file
-from md.patch import mdir, patch_renderer
+from md.patch import mdir, patch_renderer, emojize
 
 patch_renderer()
 app = Flask(__name__)
@@ -28,7 +28,7 @@ icon_tag = f'<link rel="shortcut icon" href="{icon}"/>'
 
 basic_auth = BasicAuth4MarkdownID(app)
 basic_auth.set_mdir(mdir)
-app.config['BASIC_AUTH_REALM'] = "protected markdown"
+app.config["BASIC_AUTH_REALM"] = "protected markdown"
 
 
 def dict_as_json(fn):
@@ -75,7 +75,7 @@ def rv_as_mime(mime):
 
 @app.route("/")
 def index():
-    return redirect("/md/hello/edit")
+    return redirect("/md/readme/html")
 
 
 @app.route("/sitemap")
@@ -198,6 +198,18 @@ def create_md():
         mdir.save_md(id, md)
         return {"id": id}
     return get_response(405, "method not allowed", "application/json")
+
+
+@app.route("/render", methods=["POST"])
+@rv_as_mime("plain/html")
+def render():
+    md = request.stream.read().decode("utf8")
+    if not md.strip():
+        md = "You markdown is blank! :smile:"
+        title = ":smile:"
+    else:
+        title = md.split("\n")[0].lstrip("# ").strip() if md.strip() else ""
+    return mdir.md2html(md, emojize(title))
 
 
 if __name__ == "__main__":

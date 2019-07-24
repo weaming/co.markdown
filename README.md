@@ -17,10 +17,14 @@ Collaboration with Markdown. Filesystem or redis as storage.
 * `/md/<id>`
     * DELETE: delete
     * POST: update
+* `/md/<id>/set_password`
+    * POST: update or set password
 * `/md/<id>`
     * /edit
     * /html
     * /markdown
+* `/render`
+    * POST: render the markdown you posted
 
 ## What you can use it for
 
