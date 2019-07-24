@@ -1,6 +1,6 @@
 from functools import wraps
 
-from flask import g
+from flask import g, Response
 from flask_basicauth import BasicAuth
 
 from lib.md_dir import MDir
@@ -38,6 +38,14 @@ class BasicAuth4MarkdownID(BasicAuth):
                 return self.challenge()
 
         return wrapper
+
+    def challenge(self):
+        """
+        Challenge the client for username and password.
+        """
+        return Response(
+            status=401, headers={"WWW-Authenticate": 'Basic realm="protected markdown %s"' % g.id}
+        )
 
     def authenticate(self):
         u, p = self.mdir.get_user_password(g.id)

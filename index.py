@@ -36,7 +36,6 @@ icon_header = f'<{icon}>; rel="shortcut icon"'
 
 basic_auth = BasicAuth4MarkdownID(app)
 basic_auth.set_mdir(mdir)
-app.config["BASIC_AUTH_REALM"] = "protected markdown"
 
 
 def dict_as_json(fn):
@@ -73,7 +72,7 @@ def rv_as_mime(mime):
                 response = rv
             elif isinstance(rv, dict):
                 response = jsonify(**rv)
-                mime = "application/json"
+                assert mime == "application/json"
             else:
                 if mime == "text/html":
                     rv = icon_tag + rv
