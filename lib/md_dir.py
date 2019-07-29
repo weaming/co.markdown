@@ -13,10 +13,20 @@ class MDir:
         self.redis = redis
         self.expire = expire
 
+    def _path(self, id):
+        return id + ".md"
+
     def get_path(self, id: str):
+        _path = self._path(id)
         if self.redis:
-            return "md:" + id + ".md"
-        return os.path.join(self.root, id + ".md")
+            return "md:" + _path
+        return os.path.join(self.root, _path)
+
+    def get_password_path(self, id):
+        _path = self._path(id)
+        if self.redis:
+            return "pw:" + _path
+        return None
 
     def read_md(self, id):
         path = self.get_path(id)
@@ -66,16 +76,10 @@ class MDir:
                     print(e)
             return False
 
-    def get_password_path(self, id):
-        path = self.get_path(id)
-        if self.redis:
-            return "pw:" + path
-        return path + ".md"
-
     def get_user_password(self, id):
         u, p = None, None
-        pw_key = self.get_password_path(id)
         if self.redis:
+            pw_key = self.get_password_path(id)
             v = self.redis.get(pw_key)
             if v is not None:
                 self.redis.expire(pw_key, self.expire)
@@ -83,9 +87,10 @@ class MDir:
         return u, p
 
     def set_user_password(self, id, user: str, pw: str):
-        pw_key = self.get_password_path(id)
-        pw_secret = self.hash_password(pw)
         if self.redis:
+            pw_key = self.get_password_path(id)
+            pw_secret = self.hash_password(pw)
+
             self.redis.set(pw_key, pw_secret.encode("utf8"))
             self.redis.expire(pw_key, self.expire)
             return True
