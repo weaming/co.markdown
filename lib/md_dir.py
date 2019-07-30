@@ -4,11 +4,12 @@ import redis
 
 from .common import prepare_dir, md5
 
-year = 60 * 60 * 24 * 365
+month = 60 * 60 * 24 * 31
+quarter = month * 3
 
 
 class MDir:
-    def __init__(self, root="/tmp/markdown", redis: redis.Redis = None, expire=year):
+    def __init__(self, root="/tmp/markdown", redis: redis.Redis = None, expire=quarter):
         self.root = root
         self.redis = redis
         self.expire = expire
