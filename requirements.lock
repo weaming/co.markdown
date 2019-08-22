@@ -5,7 +5,7 @@ chardet==3.0.4
 Click==7.0
 cssselect==1.0.3
 cssutils==1.0.2
-emoji==0.5.2
+emoji==0.5.3
 Flask==1.1.1
 Flask-BasicAuth==0.2.0
 idna==2.8
@@ -15,13 +15,13 @@ jsonkv==1.1.10
 lesscpy==0.13.0
 lxml==4.3.4
 MarkupSafe==1.1.1
-maxpress==0.2.6
+maxpress==0.2.7
 mistune==0.8.4
-mistune-contrib==0.1
 ply==3.11
 premailer==3.5.0
-pytz==2019.1
-redis==3.2.1
+Pygments==2.4.2
+pytz==2019.2
+redis==3.3.8
 requests==2.22.0
 six==1.12.0
 soupsieve==1.9.2
