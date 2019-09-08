@@ -3,8 +3,6 @@ requests
 beautifulsoup4
 pytz
 jsonkv
-mistune
 maxpress
-emoji
 redis
 Flask-BasicAuth
