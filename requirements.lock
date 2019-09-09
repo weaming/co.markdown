@@ -15,7 +15,7 @@ jsonkv==1.1.10
 lesscpy==0.13.0
 lxml==4.4.1
 MarkupSafe==1.1.1
-maxpress==0.4.1
+maxpress==0.4.2
 mistletoe==0.7.2
 mistune==0.8.4
 mistune-contrib==0.1
