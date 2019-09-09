@@ -27,7 +27,7 @@ example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md"
 # https://www.w3.org/2005/10/howto-favicon
 icon = "https://i.loli.net/2019/07/23/5d372848883f339418.png"
 # icon = "https://i.loli.net/2019/07/23/5d3729d9d3aef58565.png"
-icon_tag = f'<link rel="shortcut icon" href="{icon}"'
+icon_tag = f'<link rel="shortcut icon" href="{icon}">'
 # https://stackoverflow.com/questions/8091996/http-header-stylesheets
 # http://test.greenbytes.de/tech/tc/httplink/
 # https://www.iana.org/assignments/message-headers/message-headers.xhtml
