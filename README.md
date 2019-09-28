@@ -11,7 +11,7 @@ Collaboration with Markdown. Filesystem or redis as storage.
 
 ## API
 
-* /md/
+* `/md/`
     * GET:  create one with ramdom id and default content
     * POST: create one with ramdom id
 * `/md/<id>`
@@ -28,7 +28,7 @@ Collaboration with Markdown. Filesystem or redis as storage.
 
 ## What you can use it for
 
-~~No write lock,~~ no instant synchronization.
+No instant synchronization.
 
 Apply to the scene when you want to shared something to public temporarily,
 and would like to be updated by someone has the password if you have set.

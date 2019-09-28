@@ -17,7 +17,7 @@ from flask import (
 
 from lib.auth import BasicAuth4MarkdownID
 from lib.common import md5, read_file
-from md.patch import mdir, patch_renderer, emojize
+from md.patch import mdir, patch_renderer, emojize, MARKDOWN_ROOT
 
 patch_renderer()
 app = Flask(__name__)
@@ -115,7 +115,7 @@ def status():
     return {
         "flask": {"version": __version__},
         "status": "healthy",
-        "files": os.listdir("/tmp"),
+        "files": os.listdir(MARKDOWN_ROOT),
     }
 
 

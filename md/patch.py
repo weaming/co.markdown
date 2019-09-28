@@ -16,7 +16,8 @@ def get_redis():
     return rd
 
 
-mdir = MDir(os.getenv("MARKDOWN_ROOT", "/tmp/markdown"), redis=get_redis())
+MARKDOWN_ROOT = os.getenv("MARKDOWN_ROOT", "/tmp/markdown")
+mdir = MDir(MARKDOWN_ROOT, redis=get_redis())
 config, styles = None, None
 
 
