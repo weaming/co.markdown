@@ -1,6 +1,7 @@
 *.py[cod]
 __pycache__/
 .idea/
+.vscode/
 .venv
 .env
 uwsgi.master.fifo
