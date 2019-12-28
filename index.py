@@ -22,6 +22,7 @@ from md.patch import mdir, patch_renderer, emojize, MARKDOWN_ROOT
 patch_renderer()
 app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
+HOT_MAX = int(os.getenv("HOT_MAX", '100'))
 example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
 
 # https://www.w3.org/2005/10/howto-favicon
@@ -126,6 +127,20 @@ def get_response(status_code, msg: str, mime="text/plain; charset=utf-8"):
         res = make_response(msg)
     res.status_code = status_code
     return res
+
+
+@app.route("/api/top/<int:limit>", methods=["GET"])
+@rv_as_mime("application/json")
+def top_hot(limit):
+    if limit > HOT_MAX:
+        return get_response(404, f"limit is bigger than {HOT_MAX}")
+    rv = mdir.count_top_n(limit)
+
+    def to_url(x):
+        x['url'] = f'/md/{x["key"][:-len(".md")]}/html'
+        return x
+
+    return {'data': list(map(to_url, rv))}
 
 
 @app.route("/md/<id>/html", methods=["GET"])

@@ -13,6 +13,7 @@ class MDir:
         self.root = root
         self.redis = redis
         self.expire = expire
+        self.count_read_key = 'md:count:read'
 
     def _path(self, id):
         return id + ".md"
@@ -22,6 +23,11 @@ class MDir:
         if self.redis:
             return "md:" + _path
         return os.path.join(self.root, _path)
+
+    def descons_path(self, path: str):
+        if self.redis:
+            return path[len("md:") :]
+        return path
 
     def get_password_path(self, id):
         _path = self._path(id)
@@ -35,6 +41,7 @@ class MDir:
             v = self.redis.get(path)
             if v is not None:
                 self.redis.expire(path, self.expire)
+                self.redis.zincrby(self.count_read_key, 1, path)
                 return v.decode("utf8")
         else:
             if not os.path.isfile(path):
@@ -42,6 +49,31 @@ class MDir:
             with open(path) as f:
                 return f.read()
         return None
+
+    def count_top_n(self, n=0):
+        def gen():
+            got = 0
+            for i, x in enumerate(
+                self.redis.zrange(
+                    self.count_read_key, 0, -1, desc=True, withscores=True
+                )
+            ):
+                if got >= n:
+                    return
+                path = x[0].decode('utf8')
+                v = self.redis.get(path)
+                if v is None:
+                    self.redis.zrem(self.count_read_key, path)
+                    continue
+
+                got += 1
+                yield {
+                    'key': self.descons_path(path),
+                    'count': int(x[1]),
+                    'index': i + 1,
+                }
+
+        return list(gen())
 
     @staticmethod
     def md2html(md, id):
@@ -67,6 +99,7 @@ class MDir:
         path = self.get_path(id)
         if self.redis:
             self.redis.delete(self.get_password_path(id))
+            self.redis.zrem(self.count_read_key, path)
             return self.redis.delete(path)
         else:
             if os.path.isfile(path):
