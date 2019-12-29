@@ -29,10 +29,12 @@ class MDir:
             return path[len("md:") :]
         return path
 
-    def get_password_path(self, id):
+    def get_password_path(self, id, for_read=False):
         _path = self._path(id)
         if self.redis:
-            return "pw:" + _path
+            if for_read:
+                return "pw:read:" + _path
+            return "pw:write:" + _path
         return None
 
     def read_md(self, id):
@@ -99,6 +101,7 @@ class MDir:
         path = self.get_path(id)
         if self.redis:
             self.redis.delete(self.get_password_path(id))
+            self.redis.delete(self.get_password_path(id, for_read=True))
             self.redis.zrem(self.count_read_key, path)
             return self.redis.delete(path)
         else:
@@ -110,19 +113,19 @@ class MDir:
                     print(e)
             return False
 
-    def get_user_password(self, id):
+    def get_user_password(self, id, for_read=False):
         u, p = None, None
         if self.redis:
-            pw_key = self.get_password_path(id)
+            pw_key = self.get_password_path(id, for_read)
             v = self.redis.get(pw_key)
             if v is not None:
                 self.redis.expire(pw_key, self.expire)
                 p = v.decode("utf8")
         return u, p
 
-    def set_user_password(self, id, user: str, pw: str):
+    def set_user_password(self, id, user: str, pw: str, for_read=False):
         if self.redis:
-            pw_key = self.get_password_path(id)
+            pw_key = self.get_password_path(id, for_read)
             pw_secret = self.hash_password(pw)
 
             self.redis.set(pw_key, pw_secret.encode("utf8"))

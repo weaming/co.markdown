@@ -2,7 +2,7 @@ import os
 import time
 import random
 import traceback
-from functools import wraps
+from functools import wraps, partial
 from flask import (
     Flask,
     __version__,
@@ -144,6 +144,7 @@ def top_hot(limit):
 
 
 @app.route("/md/<id>/html", methods=["GET"])
+@partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/html")
 def read_md_as_html(id):
     html = mdir.read_md_as_html(id)
@@ -153,6 +154,7 @@ def read_md_as_html(id):
 
 
 @app.route("/md/<id>/markdown", methods=["GET"])
+@partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/plain; charset=utf-8")
 def read_md(id):
     md = mdir.read_md(id)
@@ -175,23 +177,44 @@ def edit_md(id):
     if md is None:
         example_md = new_with_example(id)
         return render_template("edit2.html", md=example_md, id=id)
-    u, p = mdir.get_user_password(id)
-    return render_template("edit2.html", md=md, id=id, user=u, password=p)
+    write_u, write_p = mdir.get_user_password(id, for_read=False)
+    read_u, read_p = mdir.get_user_password(id, for_read=True)
+    return render_template(
+        "edit2.html",
+        md=md,
+        id=id,
+        write_user=write_u,
+        write_password=write_p,
+        read_user=read_u,
+        read_password=read_p,
+    )
 
 
-@app.route("/md/<id>/set_password", methods=["POST"])
-@basic_auth.required
+@app.route("/md/<id>/set_write_password", methods=["POST"])
+@partial(basic_auth.required, for_read=False)
 @rv_as_mime("application/json")
-def set_password_for_md(id):
+def set_md_write_password(id):
+    return set_password_for_md(id, for_read=False)
+
+
+@app.route("/md/<id>/set_read_password", methods=["POST"])
+@partial(basic_auth.required, for_read=True)
+@rv_as_mime("application/json")
+def set_md_read_password(id):
+    return set_password_for_md(id, for_read=True)
+
+
+def set_password_for_md(id, for_read):
     md = mdir.read_md(id)
+    type = 'read' if for_read else 'write'
     if md is not None:
         data = request.get_json()
         pw = data.get("password")
         if pw:
-            if mdir.set_user_password(id, None, pw):
-                return {"message": "succeed setting password"}
+            if mdir.set_user_password(id, None, pw, for_read):
+                return {"message": f"succeed setting {type} password"}
             else:
-                return {"message": "failed setting password"}
+                return {"message": f"failed setting {type} password"}
         else:
             return {"message": "missing password"}
     return {"message": "NOT FOUND"}
