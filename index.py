@@ -210,13 +210,13 @@ def set_password_for_md(id, for_read):
     if md is not None:
         data = request.get_json()
         pw = data.get("password")
-        if pw:
-            if mdir.set_user_password(id, None, pw, for_read):
-                return {"message": f"succeed setting {type} password"}
-            else:
-                return {"message": f"failed setting {type} password"}
+        if not pw:
+            mdir.delete_user_password(id, None, for_read)
+            return {"message": f"succeed removing {type} password"}
+        if mdir.set_user_password(id, None, pw, for_read):
+            return {"message": f"succeed setting {type} password"}
         else:
-            return {"message": "missing password"}
+            return {"message": f"failed setting {type} password"}
     return {"message": "NOT FOUND"}
 
 

@@ -197,9 +197,10 @@
           `Please enter your ${type} password for this markdown`,
           ''
         ).trim()
-        if (!pw) {
-          return
-        }
+        // allow empty password
+        // if (!pw) {
+        //   return
+        // }
         axios
           .post(location.pathname.replace('/edit', `/set_${type}_password`), {
             password: pw,

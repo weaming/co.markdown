@@ -123,6 +123,14 @@ class MDir:
                 p = v.decode("utf8")
         return u, p
 
+    def delete_user_password(self, id, user: str, for_read=False):
+        if self.redis:
+            pw_key = self.get_password_path(id, for_read)
+            self.redis.delete(pw_key)
+            return True
+        # default no password
+        return True
+
     def set_user_password(self, id, user: str, pw: str, for_read=False):
         if self.redis:
             pw_key = self.get_password_path(id, for_read)
