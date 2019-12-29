@@ -92,6 +92,7 @@ class MDir:
         if self.redis:
             self.redis.set(path, text.encode("utf8"))
             self.redis.expire(id, self.expire)
+            self.redis.bgsave()
         else:
             prepare_dir(path)
             with open(path, "w") as f:
@@ -103,6 +104,7 @@ class MDir:
             self.redis.delete(self.get_password_path(id))
             self.redis.delete(self.get_password_path(id, for_read=True))
             self.redis.zrem(self.count_read_key, path)
+            self.redis.bgsave()
             return self.redis.delete(path)
         else:
             if os.path.isfile(path):
@@ -138,6 +140,7 @@ class MDir:
 
             self.redis.set(pw_key, pw_secret.encode("utf8"))
             self.redis.expire(pw_key, self.expire)
+            self.redis.bgsave()
             return True
         return False
 
