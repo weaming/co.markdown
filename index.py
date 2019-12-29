@@ -107,7 +107,7 @@ def site_map():
 @rv_as_mime("text/plain; charset=utf-8")
 def robots():
     return """User-agent: *
-Disallow: /"""
+Allow: /"""
 
 
 @app.route("/status")
