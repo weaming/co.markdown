@@ -89,7 +89,7 @@ def rv_as_mime(mime):
 
 @app.route("/")
 def index():
-    return redirect("/md/readme/html")
+    return redirect("/md/readme")
 
 
 @app.route("/sitemap")
@@ -143,6 +143,7 @@ def top_hot(limit):
     return {'data': list(map(to_url, rv))}
 
 
+@app.route("/md/<id>", methods=["GET"])
 @app.route("/md/<id>/html", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/html")
