@@ -20,6 +20,7 @@ mistletoe==0.7.2
 mistune==0.8.4
 mistune-contrib==0.1
 pangu==4.0.6.1
+pdfkit==0.6.1
 ply==3.11
 premailer==3.6.1
 Pygments==2.4.2

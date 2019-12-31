@@ -19,21 +19,30 @@ Collaboration with Markdown. Filesystem or redis as storage.
 - `/md/<id>`
   - DELETE: delete
   - POST: update
-- `/md/<id>/set_password`
-  - POST: update or set password
+  - GET: same as `/md/<id>.html`
+- `/md/<id>/set_write_password`
+  - POST: update or set write password
+- `/md/<id>/set_read_password`
+  - POST: update or set read password
 - `/md/<id>`
-  - /edit
-  - /html
-  - /markdown
+  - `/edit`: edit markdown, need write password if set
+  - `.html`: view as html, need read password if set
+  - `.md`: view as markdown raw text, need read password if set
+  - `.pdf`: view as PDF, need read password if set
 - `/render`
   - POST: render the markdown you posted
+- `/api`
+  - `/top/10`
+    - GET: get the top 10 hottest notes
 
 ## What you can use it for
 
-No instant synchronization.
-
 Apply to the scene when you want to shared something to public temporarily,
 and would like to be updated by someone has the password if you have set.
+
+## Dependencies
+
+- [`wkhtml2pdf`](https://wkhtmltopdf.org/downloads.html): render as PDF in `/md/<id>.pdf`
 
 ## TODO
 
@@ -54,6 +63,7 @@ and would like to be updated by someone has the password if you have set.
 - [x] fix tooltip size on mobile
 - [x] 统计访问频次以获取热门笔记
   - [ ] 从热门笔记中隐藏
+- [x] 渲染成 PDF
 
 ## Screenshot
 

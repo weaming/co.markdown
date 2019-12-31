@@ -3,6 +3,7 @@ import time
 import random
 import traceback
 from functools import wraps, partial
+import pdfkit
 from flask import (
     Flask,
     __version__,
@@ -89,7 +90,7 @@ def rv_as_mime(mime):
 
 @app.route("/")
 def index():
-    return redirect("/md/readme")
+    return redirect("/md/readme.html")
 
 
 @app.route("/sitemap")
@@ -113,11 +114,7 @@ Allow: /"""
 @app.route("/status")
 @rv_as_mime("application/json")
 def status():
-    return {
-        "flask": {"version": __version__},
-        "status": "healthy",
-        "files": os.listdir(MARKDOWN_ROOT),
-    }
+    return {"flask": {"version": __version__}, "files": os.listdir(MARKDOWN_ROOT)}
 
 
 def get_response(status_code, msg: str, mime="text/plain; charset=utf-8"):
@@ -137,14 +134,14 @@ def top_hot(limit):
     rv = mdir.count_top_n(limit)
 
     def to_url(x):
-        x['url'] = f'/md/{x["key"][:-len(".md")]}/html'
+        x['url'] = f'/md/{x["key"][:-len(".md")]}.html'
         return x
 
     return {'data': list(map(to_url, rv))}
 
 
 @app.route("/md/<id>", methods=["GET"])
-@app.route("/md/<id>/html", methods=["GET"])
+@app.route("/md/<id>.html", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/html")
 def read_md_as_html(id):
@@ -154,7 +151,7 @@ def read_md_as_html(id):
     return html
 
 
-@app.route("/md/<id>/markdown", methods=["GET"])
+@app.route("/md/<id>.md", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/plain; charset=utf-8")
 def read_md(id):
@@ -162,6 +159,30 @@ def read_md(id):
     if md is None:
         return get_response(404, "FILE NOT FOUND")
     return md
+
+
+@app.route("/md/<id>.pdf", methods=["GET"])
+@partial(basic_auth.required, for_read=True)
+@rv_as_mime("application/pdf")
+def read_md_as_pdf(id):
+    html = mdir.read_md_as_html(id)
+    if html is None:
+        return get_response(404, "FILE NOT FOUND")
+    try:
+        return pdfkit.from_string(
+            html,
+            False,
+            # https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3424
+            options={
+                '--disable-javascript': '',
+                # '--javascript-delay': 5,
+                '--encoding': 'utf-8',
+                '--quiet': '',
+            },
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return get_response(500, str(e))
 
 
 def new_with_example(id):
