@@ -1,9 +1,14 @@
+import hashlib
 from functools import wraps
 
 from flask import g, Response, request
 from flask_basicauth import BasicAuth
 
 from lib.md_dir import MDir
+
+
+def sha256(text: str):
+    return hashlib.sha256(text.encode('utf8')).hexdigest()
 
 
 class BasicAuth4MarkdownID(BasicAuth):
@@ -46,7 +51,7 @@ class BasicAuth4MarkdownID(BasicAuth):
             status=401,
             headers={
                 "WWW-Authenticate": 'Basic realm="protected markdown %s for %s"'
-                % (g.id, 'read' if for_read else 'write')
+                % (sha256(g.id), 'read' if for_read else 'write')
             },
         )
 
