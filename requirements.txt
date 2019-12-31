@@ -6,3 +6,4 @@ jsonkv
 maxpress
 redis
 Flask-BasicAuth
+pdfkit

@@ -1,49 +1,55 @@
 <!DOCTYPE html>
 <html>
   <title>{{ id }}</title>
+  <link
+    rel="shortcut icon"
+    href="https://i.loli.net/2019/07/23/5d372848883f339418.png"
+  />
   <style>
     body {
       margin: 0;
       padding: 0;
-      background: #EDEDED;
-      font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
-    Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
-    "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
-    "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
-    "WenQuanYi Zen Hei Sharp", sans-serif;
+      background: #ededed;
+      font-family: 'Inconsolata', Coda, 'Microsoft Yahei', 'Helvetica Neue',
+        Helvetica, 'Nimbus Sans L', Arial, 'Liberation Sans', 'PingFang SC',
+        'Hiragino Sans GB', 'Source Han Sans CN', 'Source Han Sans SC',
+        'Wenquanyi Micro Hei', 'WenQuanYi Zen Hei', 'ST Heiti', SimHei,
+        'WenQuanYi Zen Hei Sharp', sans-serif;
       font-size: 16px;
     }
 
-    @media screen and (min-width: 1024px) {
+    #editor textarea#paper {
+      white-space: pre-wrap;
+      font-size: 16px;
+      overflow: auto;
+      font-family: 'Inconsolata', Coda, 'Microsoft Yahei', 'Helvetica Neue',
+        Helvetica, 'Nimbus Sans L', Arial, 'Liberation Sans', 'PingFang SC',
+        'Hiragino Sans GB', 'Source Han Sans CN', 'Source Han Sans SC',
+        'Wenquanyi Micro Hei', 'WenQuanYi Zen Hei', 'ST Heiti', SimHei,
+        'WenQuanYi Zen Hei Sharp', sans-serif;
+      resize: none;
+
+      /* A4 paper */
+      box-sizing: border-box;
+      width: 100%;
+      padding: 2cm;
+      /* margin: 0.5cm; */
+      margin: 10px;
+      border: 1px #d3d3d3 solid;
+      border-radius: 5px;
+      background: #f5f5d5;
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+      min-height: 90vh;
+    }
+
+    @media screen and (min-width: 1200px) {
       div#editor {
         margin: 0 auto;
         width: 38vw;
       }
-
-      #editor textarea#paper {
-        white-space: pre-wrap;
-        font-size: 16px;
-        overflow: auto;
-        font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
-        Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
-        "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
-        "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
-        "WenQuanYi Zen Hei Sharp", sans-serif;
-        resize: none;
-
-        /* A4 paper */
-        min-width: 21cm;
-        padding: 2cm;
-        margin: 0.5cm auto;
-        border: 1px #D3D3D3 solid;
-        border-radius: 5px;
-        background: #F5F5D5;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        min-height: 90vh;
-      }
     }
 
-    @media screen and (max-width: 1024px) {
+    @media screen and (max-width: 1200px) {
       body {
         font-size: 40px;
       }
@@ -55,93 +61,184 @@
 
       #editor textarea#paper {
         font-size: 40px;
-        white-space: pre-wrap;
-        overflow: auto;
-        font-family: "Inconsolata", Coda, "Microsoft Yahei", "Helvetica Neue",
-        Helvetica, "Nimbus Sans L", Arial, "Liberation Sans", "PingFang SC",
-        "Hiragino Sans GB", "Source Han Sans CN", "Source Han Sans SC",
-        "Wenquanyi Micro Hei", "WenQuanYi Zen Hei", "ST Heiti", SimHei,
-        "WenQuanYi Zen Hei Sharp", sans-serif;
-        resize: none;
-
-        /* A4 paper */
-        width: 83%;
-        padding: 2cm;
-        margin: 0.5cm auto;
-        border: 1px #D3D3D3 solid;
-        border-radius: 5px;
-        background: #F5F5D5;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        min-height: 86vh;
       }
 
-      #editor small span.mb-hidden {
-        display: none;
+      /* fix for editor */
+      #editor .editor-toolbar a, /* simple-markdown-editor */
+      #editor .editor-toolbar button /* easymde */ {
+        margin: 15px;
+        font-size: 20px;
       }
     }
 
     #editor small {
       display: inline-block;
-      padding: 10px ;
+      padding: 10px;
     }
 
-    #editor small pre {
+    #editor small code,
+    #editor small .btn {
       display: inline-block;
       border: 1px solid black;
-      padding: 3px 5px;
+      padding: 3px 6px;
       margin: 0 2px;
       border-radius: 2px;
       text-decoration: none;
     }
-    #editor small pre.btn a {
+    #editor small .btn a {
       text-decoration: none;
     }
 
-    #submit {
+    .pointer {
       cursor: pointer;
+    }
+    .bg-green {
+      background: #009900;
+    }
+    .bg-red {
+      background: red;
+    }
+    .white {
+      color: white;
     }
   </style>
   <meta http-equiv="content-Type" content="text/html; charset=UTF-8" />
   <body>
     <div id="editor">
       <small>
-        <pre class="btn"><a href="/md/" target="_blank">New</a></pre>
-        | <pre class="btn"><a href="/md/{{id}}/html" target="_blank">Preview</a></pre>
-        | <pre class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></pre>
-        | <span class="mb-hidden">Press <pre>Ctrl</pre>/<pre>⌘</pre> + <pre>Enter</pre>to </span>
-          <pre id="submit">Submit</pre>
+        <span class="btn"><a href="/md/" target="_blank">New</a></span>
+        | <span class="btn"><a href="/md/{{id}}" target="_blank">Preview</a></span>
+        | <span class="btn"><a href="/md/{{id}}/markdown" target="_blank">Markdown</a></span>
+        {% if write_password %}
+        | <span
+          id="setWritePW"
+          class="btn pointer bg-green white",
+          title="Protected for Write"
+          >Write Protected</span>
+        {% else %}
+        | <span
+          id="setWritePW"
+          class="btn pointer bg-red white",
+          title="Set Write Password",
+          >Write Lock</span>
+        {% endif %} {% if read_password %}
+        | <span
+          id="setReadPW"
+          class="btn pointer bg-green white",
+          title="Protected for Read"
+          >Read Protected</span>
+        {% else %}
+        | <span
+          id="setReadPW"
+          class="btn pointer bg-red white",
+          title="Set Read Password"
+          >Read Lock</span>
+        {% endif %}
+        | <span id="delete" class="btn pointer">Delete</span>
+        | <span
+          id="submit"
+          class="btn pointer"
+          title="Shortcut: Press Ctrl/⌘ + Enter/S to save!"
+          >Save</span>
       </small>
       <textarea contenteditable="true" id="paper">{{ md }}</textarea>
     </div>
   </body>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.19.0/axios.min.js"></script>
+  <!-- <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css"> -->
+  <!-- <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script> -->
+  <link rel="stylesheet" href="https://unpkg.com/easymde/dist/easymde.min.css"/>
+  <script src="https://unpkg.com/easymde/dist/easymde.min.js"></script>
   <script>
     (function() {
-      "use strict";
-      window.print = console.log.bind(console);
+      'use strict'
+      window.print = console.log.bind(console)
+      let titleCase = function(str) {
+        return str
+          .replace(/[a-z]/i, function(letter) {
+            return letter.toUpperCase()
+          })
+          .trim()
+      }
+      let paper = document.querySelector('#editor textarea#paper')
+
+      // let MDE = new SimpleMDE({ element: paper, autofocus: true });
+      let MDE = new EasyMDE({element: paper, spellChecker: false})
 
       let update = function() {
-        let md = document.querySelector("#editor textarea#paper").value;
-        axios.post(location.pathname.replace("/edit", ""), md)
-          .then(function (response) {
-            // handle success
-            console.log(response);
-            let msg = response.data.message;
-            alert(msg);
-            <!-- location.reload() -->
+        // let md = paper.value;
+        let md = MDE.value()
+        axios
+          .post(location.pathname.replace('/edit', ''), md)
+          .then(function(response) {
+            console.log(response)
+            let msg = titleCase(response.data.message)
+            alert(msg)
           })
-          .catch(function (error) {
-            // handle error
-            console.log(error);
-          });
+          .catch(function(error) {
+            console.log(error)
+          })
       }
 
-      document.addEventListener("keydown", e => {
-        <!-- print('->', e, e.key, e.metaKey, e.ctrlKey); -->
-        if (e.key === "Enter" && (e.ctrlKey || e.metaKey)) { update() };
-      });
+      document.addEventListener('keydown', e => {
+        // print('->', e, e.key, e.metaKey, e.ctrlKey);
+        if ((e.key === 'Enter' || e.key === 's') && (e.ctrlKey || e.metaKey)) {
+          e.preventDefault()
+          update()
+        }
+      })
 
-      document.getElementById("submit").onclick = update;
-    })();
+      document.getElementById('submit').onclick = update
+
+      // password
+      let setPW = function(forRead) {
+        let type = forRead ? 'read' : 'write'
+        let pw = prompt(
+          `Please enter your ${type} password for this markdown`,
+          ''
+        ).trim()
+        // allow empty password
+        // if (!pw) {
+        //   return
+        // }
+        axios
+          .post(location.pathname.replace('/edit', `/set_${type}_password`), {
+            password: pw,
+          })
+          .then(function(response) {
+            console.log(response)
+            let msg = titleCase(response.data.message)
+            alert(msg)
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+      }
+      document.getElementById('setWritePW').onclick = function() {
+        setPW(false)
+      }
+      document.getElementById('setReadPW').onclick = function() {
+        setPW(true)
+      }
+
+      // delete
+      let deleteme = function() {
+        print('delete')
+        axios
+          .delete(location.pathname.replace('/edit', ''), '')
+          .then(function(response) {
+            console.log(response)
+            let msg = response.data.message
+            alert(
+              titleCase(msg) +
+                '! Of course, you can save again before refresh this page.'
+            )
+          })
+          .catch(function(error) {
+            console.log(error)
+          })
+      }
+      document.getElementById('delete').onclick = deleteme
+    })()
   </script>
 </html>

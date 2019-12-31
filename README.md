@@ -42,7 +42,12 @@ and would like to be updated by someone has the password if you have set.
 
 ## Dependencies
 
-- [`wkhtml2pdf`](https://wkhtmltopdf.org/downloads.html): render as PDF in `/md/<id>.pdf`
+- [`wkhtml2pdf`](https://github.com/wkhtmltopdf/wkhtmltopdf/releases): render as PDF in `/md/<id>.pdf`
+
+## Fonts used in rendering PDF
+
+- [Problem with emoji icons](https://github.com/wkhtmltopdf/wkhtmltopdf/issues/2913)
+  - [Setup fonts on ubuntu](https://md.drink.cafe/md/fonts.html)
 
 ## TODO
 

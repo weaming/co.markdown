@@ -198,11 +198,11 @@ def edit_md(id):
     md = mdir.read_md(id)
     if md is None:
         example_md = new_with_example(id)
-        return render_template("edit2.html", md=example_md, id=id)
+        return render_template("edit.html", md=example_md, id=id)
     write_u, write_p = mdir.get_user_password(id, for_read=False)
     read_u, read_p = mdir.get_user_password(id, for_read=True)
     return render_template(
-        "edit2.html",
+        "edit.html",
         md=md,
         id=id,
         write_user=write_u,
