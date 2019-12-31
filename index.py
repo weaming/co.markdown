@@ -4,6 +4,7 @@ import random
 import traceback
 from functools import wraps, partial
 import pdfkit
+import imgkit
 from flask import (
     Flask,
     __version__,
@@ -174,6 +175,31 @@ def read_md_as_pdf(id):
             False,
             # https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3424
             options={
+                '--disable-javascript': '',
+                # '--javascript-delay': 5,
+                '--encoding': 'utf-8',
+                '--quiet': '',
+            },
+        )
+    except Exception as e:
+        traceback.print_exc()
+        return get_response(500, str(e))
+
+
+@app.route("/md/<id>.png", methods=["GET"])
+@partial(basic_auth.required, for_read=True)
+@rv_as_mime("image/png")
+def read_md_as_png(id):
+    html = mdir.read_md_as_html(id)
+    if html is None:
+        return get_response(404, "FILE NOT FOUND")
+    try:
+        return imgkit.from_string(
+            html,
+            False,
+            # https://github.com/wkhtmltopdf/wkhtmltopdf/issues/3424
+            options={
+                '--format': 'png',
                 '--disable-javascript': '',
                 # '--javascript-delay': 5,
                 '--encoding': 'utf-8',

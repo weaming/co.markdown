@@ -9,6 +9,7 @@ emoji==0.5.3
 Flask==1.1.1
 Flask-BasicAuth==0.2.0
 idna==2.8
+imgkit==1.0.2
 itsdangerous==1.1.0
 Jinja2==2.10.1
 jsonkv==1.1.10

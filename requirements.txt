@@ -7,3 +7,4 @@ maxpress
 redis
 Flask-BasicAuth
 pdfkit
+imgkit
