@@ -8,6 +8,20 @@ month = 60 * 60 * 24 * 31
 quarter = month * 3
 
 
+def extract_user_id_from_md_id(id: str):
+    if '/' in id:
+        return id.split('/', 1)[0]
+    return None
+
+
+def parse_md_id_under_user(id: str) -> (bool, str):
+    user_id = extract_user_id_from_md_id(id)
+    if user_id:
+        # all markdowns under an user are protected using same password
+        return True, user_id
+    return False, id
+
+
 class MDir:
     def __init__(self, root="/tmp/markdown", redis: redis.Redis = None, expire=quarter):
         self.root = root
@@ -15,11 +29,14 @@ class MDir:
         self.expire = expire
         self.count_read_key = 'md:count:read'
 
-    def _path(self, id):
+    def _md_id(self, id):
         return id + ".md"
 
+    def _user_id(self, user_id):
+        return user_id + '/'
+
     def get_path(self, id: str):
-        _path = self._path(id)
+        _path = self._md_id(id)
         if self.redis:
             return "md:" + _path
         return os.path.join(self.root, _path)
@@ -30,11 +47,16 @@ class MDir:
         return path
 
     def get_password_path(self, id, for_read=False):
-        _path = self._path(id)
+        for_user, user_id = parse_md_id_under_user(id)
+        # only write passwords of one user are same
+        if for_user and not for_read:
+            md_id = self._user_id(user_id)
+        else:
+            md_id = self._md_id(id)
         if self.redis:
             if for_read:
-                return "pw:read:" + _path
-            return "pw:write:" + _path
+                return "pw:read:" + md_id
+            return "pw:write:" + md_id
         return None
 
     def read_md(self, id):

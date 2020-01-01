@@ -141,8 +141,8 @@ def top_hot(limit):
     return {'data': list(map(to_url, rv))}
 
 
-@app.route("/md/<id>", methods=["GET"])
-@app.route("/md/<id>.html", methods=["GET"])
+@app.route("/md/<path:id>", methods=["GET"])
+@app.route("/md/<path:id>.html", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/html")
 def read_md_as_html(id):
@@ -152,7 +152,7 @@ def read_md_as_html(id):
     return html
 
 
-@app.route("/md/<id>.md", methods=["GET"])
+@app.route("/md/<path:id>.md", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/plain; charset=utf-8")
 def read_md(id):
@@ -162,7 +162,7 @@ def read_md(id):
     return md
 
 
-@app.route("/md/<id>.pdf", methods=["GET"])
+@app.route("/md/<path:id>.pdf", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("application/pdf")
 def read_md_as_pdf(id):
@@ -186,7 +186,7 @@ def read_md_as_pdf(id):
         return get_response(500, str(e))
 
 
-@app.route("/md/<id>.png", methods=["GET"])
+@app.route("/md/<path:id>.png", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("image/png")
 def read_md_as_png(id):
@@ -217,7 +217,7 @@ def new_with_example(id):
     return example_md
 
 
-@app.route("/md/<id>/edit", methods=["GET"])
+@app.route("/md/<path:id>/edit", methods=["GET"])
 @basic_auth.required
 @rv_as_mime("text/html")
 def edit_md(id):
@@ -238,14 +238,14 @@ def edit_md(id):
     )
 
 
-@app.route("/md/<id>/set_write_password", methods=["POST"])
+@app.route("/md/<path:id>/set_write_password", methods=["POST"])
 @partial(basic_auth.required, for_read=False)
 @rv_as_mime("application/json")
 def set_md_write_password(id):
     return set_password_for_md(id, for_read=False)
 
 
-@app.route("/md/<id>/set_read_password", methods=["POST"])
+@app.route("/md/<path:id>/set_read_password", methods=["POST"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("application/json")
 def set_md_read_password(id):
@@ -260,15 +260,15 @@ def set_password_for_md(id, for_read):
         pw = data.get("password")
         if not pw:
             mdir.delete_user_password(id, None, for_read)
-            return {"message": f"succeed removing {type} password"}
-        if mdir.set_user_password(id, None, pw, for_read):
-            return {"message": f"succeed setting {type} password"}
+            return {"message": f"succeed removing {type} password", "id": id}
+        if mdir.set_user_password(id, None, pw, for_read,):
+            return {"message": f"succeed setting {type} password", "id": id}
         else:
-            return {"message": f"failed setting {type} password"}
-    return {"message": "NOT FOUND"}
+            return {"message": f"failed setting {type} password", "id": id}
+    return {"message": "NOT FOUND", "id": id}
 
 
-@app.route("/md/<id>", methods=["DELETE", "POST"])
+@app.route("/md/<path:id>", methods=["DELETE", "POST"])
 @basic_auth.required
 @rv_as_mime("application/json")
 def update_or_delete_md(id):

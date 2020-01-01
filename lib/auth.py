@@ -50,7 +50,7 @@ class BasicAuth4MarkdownID(BasicAuth):
         return Response(
             status=401,
             headers={
-                "WWW-Authenticate": 'Basic realm="protected markdown %s for %s"'
+                "WWW-Authenticate": 'Basic realm="markdown with hash %s is protected for %s"'
                 % (sha256(g.id), 'read' if for_read else 'write')
             },
         )
