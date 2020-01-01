@@ -35,7 +35,7 @@ class MDir:
     def _user_id(self, user_id):
         return user_id + '/'
 
-    def get_path(self, id: str):
+    def get_redis_md_key(self, id: str):
         _path = self._md_id(id)
         if self.redis:
             return "md:" + _path
@@ -46,7 +46,7 @@ class MDir:
             return path[len("md:") :]
         return path
 
-    def get_password_path(self, id, for_read=False):
+    def get_redis_password_key(self, id, for_read=False):
         for_user, user_id = parse_md_id_under_user(id)
         # only write passwords of one user are same
         if for_user and not for_read:
@@ -60,7 +60,7 @@ class MDir:
         return None
 
     def read_md(self, id):
-        path = self.get_path(id)
+        path = self.get_redis_md_key(id)
         if self.redis:
             v = self.redis.get(path)
             if v is not None:
@@ -110,7 +110,7 @@ class MDir:
         return None
 
     def save_md(self, id, text):
-        path = self.get_path(id)
+        path = self.get_redis_md_key(id)
         if self.redis:
             self.redis.set(path, text.encode("utf8"))
             self.redis.expire(id, self.expire)
@@ -121,10 +121,10 @@ class MDir:
                 f.write(text)
 
     def rm_md(self, id):
-        path = self.get_path(id)
+        path = self.get_redis_md_key(id)
         if self.redis:
-            self.redis.delete(self.get_password_path(id))
-            self.redis.delete(self.get_password_path(id, for_read=True))
+            self.redis.delete(self.get_redis_password_key(id))
+            self.redis.delete(self.get_redis_password_key(id, for_read=True))
             self.redis.zrem(self.count_read_key, path)
             self.redis.bgsave()
             return self.redis.delete(path)
@@ -140,7 +140,7 @@ class MDir:
     def get_user_password(self, id, for_read=False):
         u, p = None, None
         if self.redis:
-            pw_key = self.get_password_path(id, for_read)
+            pw_key = self.get_redis_password_key(id, for_read)
             v = self.redis.get(pw_key)
             if v is not None:
                 self.redis.expire(pw_key, self.expire)
@@ -149,7 +149,7 @@ class MDir:
 
     def delete_user_password(self, id, user: str, for_read=False):
         if self.redis:
-            pw_key = self.get_password_path(id, for_read)
+            pw_key = self.get_redis_password_key(id, for_read)
             self.redis.delete(pw_key)
             return True
         # default no password
@@ -157,7 +157,7 @@ class MDir:
 
     def set_user_password(self, id, user: str, pw: str, for_read=False):
         if self.redis:
-            pw_key = self.get_password_path(id, for_read)
+            pw_key = self.get_redis_password_key(id, for_read)
             pw_secret = self.hash_password(pw)
 
             self.redis.set(pw_key, pw_secret.encode("utf8"))
