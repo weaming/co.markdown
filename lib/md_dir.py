@@ -67,7 +67,7 @@ class MDir:
     def list_md(self, id) -> Optional[List[str]]:
         path = self.get_redis_md_key(id, only_prefix=True)
         if self.redis:
-            mds = self.redis.keys(path + '*')
+            mds = self.redis.keys(path + '/*')
             return [self.descons_path(x.decode('utf8'))[: -len('.md')] for x in mds]
         else:
             if not os.path.isdir(path):
