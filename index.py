@@ -141,7 +141,6 @@ def top_hot(limit):
     return {'data': list(map(to_url, rv))}
 
 
-@app.route("/md/<path:id>", methods=["GET"])
 @app.route("/md/<path:id>.html", methods=["GET"])
 @partial(basic_auth.required, for_read=True)
 @rv_as_mime("text/html")
@@ -217,7 +216,6 @@ def new_with_example(id):
     return example_md
 
 
-@basic_auth.required
 @app.route("/md/<user_id>/", methods=["GET"])
 @rv_as_mime("text/html")
 def list_md(user_id):
