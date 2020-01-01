@@ -1,4 +1,6 @@
 import os
+from typing import Optional, List
+
 import mistune
 import redis
 
@@ -35,8 +37,11 @@ class MDir:
     def _user_id(self, user_id):
         return user_id + '/'
 
-    def get_redis_md_key(self, id: str):
-        _path = self._md_id(id)
+    def get_redis_md_key(self, id: str, only_prefix=False):
+        if not only_prefix:
+            _path = self._md_id(id)
+        else:
+            _path = id
         if self.redis:
             return "md:" + _path
         return os.path.join(self.root, _path)
@@ -57,6 +62,17 @@ class MDir:
             if for_read:
                 return "pw:read:" + md_id
             return "pw:write:" + md_id
+        return None
+
+    def list_md(self, id) -> Optional[List[str]]:
+        path = self.get_redis_md_key(id, only_prefix=True)
+        if self.redis:
+            mds = self.redis.keys(path + '*')
+            return [self.descons_path(x.decode('utf8'))[: -len('.md')] for x in mds]
+        else:
+            if not os.path.isdir(path):
+                return None
+            return os.listdir(path)
         return None
 
     def read_md(self, id):

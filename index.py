@@ -217,6 +217,18 @@ def new_with_example(id):
     return example_md
 
 
+@basic_auth.required
+@app.route("/md/<user_id>/", methods=["GET"])
+@rv_as_mime("text/html")
+def list_md(user_id):
+    mds = mdir.list_md(user_id)
+    title = f'Notes of user {user_id}'
+    md = f'# Notes of user {user_id}\n\n' + '\n'.join(
+        f'* [{x}](/md/{x}.html)' for x in sorted(mds)
+    )
+    return mdir.md2html(md, title)
+
+
 @app.route("/md/<path:id>/edit", methods=["GET"])
 @basic_auth.required
 @rv_as_mime("text/html")
