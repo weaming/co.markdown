@@ -79,9 +79,14 @@ def rv_as_mime(mime):
                 response = jsonify(**rv)
                 assert mime == "application/json"
             else:
+                if isinstance(rv, tuple) and len(rv) == 2:
+                    rv, status_code = rv
+                else:
+                    status_code = 200
                 if mime == "text/html":
                     rv = icon_tag + rv
                 response = make_response(rv)
+                response.status_code = status_code
             response.headers["Content-Type"] = mime
             response.headers["Link"] = icon_header
             return response
@@ -239,6 +244,15 @@ def list_md(user_id):
 @rv_as_mime("text/html")
 def edit_md(id):
     md = mdir.read_md(id)
+    if '/' in id:
+        user_id = id.split('/', 1)[0]
+        md_with_user_id_as_id = mdir.read_md(user_id)
+        if md_with_user_id_as_id:
+            return (
+                f'User id "{user_id}" is used as markdown id. Please choose another user id.',
+                400,
+            )
+
     if md is None:
         example_md = new_with_example(id)
         return render_template("edit.html", md=example_md, id=id)
