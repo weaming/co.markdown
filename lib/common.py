@@ -133,3 +133,7 @@ def md5(text):
     m = hashlib.md5()
     m.update(text.encode("utf8"))
     return m.hexdigest()
+
+
+def sha256(text: str):
+    return hashlib.sha256(text.encode('utf8')).hexdigest()

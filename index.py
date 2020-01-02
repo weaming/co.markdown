@@ -16,6 +16,7 @@ from flask import (
     request,
     render_template,
 )
+from werkzeug.wrappers.response import Response as Response2
 
 from lib.auth import BasicAuth4MarkdownID
 from lib.common import md5, read_file
@@ -25,7 +26,8 @@ patch_renderer()
 app = Flask(__name__)
 DEBUG = bool(os.getenv("DEBUG"))
 HOT_MAX = int(os.getenv("HOT_MAX", '100'))
-example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
+# example_md_path = os.path.join(os.path.dirname(__file__), "templates/example.md")
+example_md_path = os.path.join(os.path.dirname(__file__), "templates/example_simple.md")
 
 # https://www.w3.org/2005/10/howto-favicon
 icon = "https://i.loli.net/2019/07/23/5d372848883f339418.png"
@@ -71,7 +73,7 @@ def rv_as_mime(mime):
         @wraps(fn)
         def _fn(*args, **kwargs):
             rv = fn(*args, **kwargs)
-            if isinstance(rv, Response):
+            if isinstance(rv, (Response, Response2)):
                 response = rv
             elif isinstance(rv, dict):
                 response = jsonify(**rv)
@@ -219,6 +221,11 @@ def new_with_example(id):
 @app.route("/md/<user_id>/", methods=["GET"])
 @rv_as_mime("text/html")
 def list_md(user_id):
+    # user_id maybe a markdown id
+    md = mdir.read_md(user_id)
+    if md is not None:
+        return redirect(f"/md/{user_id}.html")
+
     mds = mdir.list_md(user_id)
     title = f'Notes of user {user_id}'
     md = f'# Notes of user {user_id}\n\n' + '\n'.join(

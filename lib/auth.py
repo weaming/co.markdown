@@ -1,14 +1,9 @@
-import hashlib
 from functools import wraps
-
 from flask import g, Response, request
 from flask_basicauth import BasicAuth
 
 from lib.md_dir import MDir
-
-
-def sha256(text: str):
-    return hashlib.sha256(text.encode('utf8')).hexdigest()
+from lib.common import sha256
 
 
 class BasicAuth4MarkdownID(BasicAuth):
