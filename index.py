@@ -253,7 +253,7 @@ def edit_md(id):
                 400,
             )
     else:
-        mds = mdir.list_md(user_id)
+        mds = mdir.list_md(id)
         if mds:
             return (
                 f'Markdown id "{id}" is used as user id. Please choose another one.',
