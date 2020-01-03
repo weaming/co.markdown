@@ -137,3 +137,7 @@ def md5(text):
 
 def sha256(text: str):
     return hashlib.sha256(text.encode('utf8')).hexdigest()
+
+
+def md_id_to_user_id(id: str):
+    return id.split('/', 1)[0]

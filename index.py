@@ -19,7 +19,7 @@ from flask import (
 from werkzeug.wrappers.response import Response as Response2
 
 from lib.auth import BasicAuth4MarkdownID
-from lib.common import md5, read_file
+from lib.common import md5, read_file, md_id_to_user_id
 from md.patch import mdir, patch_renderer, emojize, MARKDOWN_ROOT
 
 patch_renderer()
@@ -138,7 +138,7 @@ def get_response(status_code, msg: str, mime="text/plain; charset=utf-8"):
 @rv_as_mime("application/json")
 def top_hot(limit):
     if limit > HOT_MAX:
-        return get_response(404, f"limit is bigger than {HOT_MAX}")
+        return get_response(400, f"limit is bigger than {HOT_MAX}")
     rv = mdir.count_top_n(limit)
 
     def to_url(x):
@@ -245,7 +245,7 @@ def list_md(user_id):
 def edit_md(id):
     md = mdir.read_md(id)
     if '/' in id:
-        user_id = id.split('/', 1)[0]
+        user_id = md_id_to_user_id(id)
         md_with_user_id_as_id = mdir.read_md(user_id)
         if md_with_user_id_as_id:
             return (

@@ -3,7 +3,7 @@ from flask import g, Response, request
 from flask_basicauth import BasicAuth
 
 from lib.md_dir import MDir
-from lib.common import sha256
+from lib.common import sha256, md_id_to_user_id
 
 
 class BasicAuth4MarkdownID(BasicAuth):
@@ -46,7 +46,14 @@ class BasicAuth4MarkdownID(BasicAuth):
             status=401,
             headers={
                 "WWW-Authenticate": 'Basic realm="markdown with hash %s is protected for %s"'
-                % (sha256(g.id), 'read' if for_read else 'write')
+                % (
+                    sha256(
+                        self.mdir.get_redis_md_key(
+                            md_id_to_user_id(g.id), only_prefix='/' in g.id
+                        )
+                    ),
+                    'read' if for_read else 'write',
+                )
             },
         )
 
