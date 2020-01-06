@@ -20,15 +20,15 @@ Collaboration with Markdown. Filesystem or redis as storage.
   - DELETE: delete
   - POST: update
   - GET: same as `/md/<id>.html`
-- `/md/<id>/set_write_password`
-  - POST: update or set write password
-- `/md/<id>/set_read_password`
-  - POST: update or set read password
 - `/md/<id>`
   - `/edit`: edit markdown, need write password if set
   - `.html`: view as html, need read password if set
   - `.md`: view as markdown raw text, need read password if set
   - `.pdf`: view as PDF, need read password if set
+- `/md/<id>/set_write_password`
+  - POST: update or set write password
+- `/md/<id>/set_read_password`
+  - POST: update or set read password
 - `/render`
   - POST: render the markdown you posted
 - `/api`
