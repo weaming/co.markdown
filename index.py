@@ -38,6 +38,11 @@ icon_tag = f'<link rel="shortcut icon" href="{icon}">'
 # https://www.iana.org/assignments/message-headers/message-headers.xhtml
 # https://tools.ietf.org/html/rfc8288
 icon_header = f'<{icon}>; rel="shortcut icon"'
+extra_html_path = 'extra-footer.html'
+if os.path.isfile(extra_html_path):
+    extra_html = open(extra_html_path).read()
+else:
+    extra_html = ''
 
 basic_auth = BasicAuth4MarkdownID(app)
 basic_auth.set_mdir(mdir)
@@ -84,7 +89,7 @@ def rv_as_mime(mime):
                 else:
                     status_code = 200
                 if mime == "text/html":
-                    rv = icon_tag + rv
+                    rv = icon_tag + rv + extra_html
                 response = make_response(rv)
                 response.status_code = status_code
             response.headers["Content-Type"] = mime
