@@ -304,7 +304,7 @@ def set_password_for_md(id, for_read):
         if not pw:
             mdir.delete_user_password(id, None, for_read)
             return {"message": f"succeed removing {type} password", "id": id}
-        if mdir.set_user_password(id, None, pw, for_read,):
+        if mdir.set_user_password(id, None, pw, for_read):
             return {"message": f"succeed setting {type} password", "id": id}
         else:
             return {"message": f"failed setting {type} password", "id": id}
@@ -332,6 +332,11 @@ def update_or_delete_md(id):
 def create_md():
     id = md5(str(time.time()) + str(random.randrange(0, 1000)))
     if request.method == "GET":
+        # https://www.keycdn.com/blog/web-crawlers
+        ua = request.headers.get('User-Agent').lower()
+        if any(x in ua for x in ['bot', 'crawler', 'spider', 'archive', 'curl']):
+            return 'not for spider', 403
+
         new_with_example(id)
         return redirect(f"/md/{id}/edit")
 
