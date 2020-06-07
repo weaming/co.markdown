@@ -158,6 +158,7 @@ def top_hot(limit):
 @rv_as_mime("text/html")
 def read_md_as_html(id):
     html = mdir.read_md_as_html(id)
+    html = '<meta name="referrer" content="same-origin">' + html
     if html is None:
         return get_response(404, "FILE NOT FOUND")
     return html
